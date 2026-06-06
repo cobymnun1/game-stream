@@ -1,5 +1,9 @@
 version: "2.0"
 
+endpoints:
+  sunshine-ip:
+    kind: ip
+
 services:
   sunshine:
     image: {{sunshineImage}}
@@ -8,46 +12,52 @@ services:
         as: 47984
         to:
           - global: true
+            ip: sunshine-ip
       - port: 47989
         as: 47989
         to:
           - global: true
+            ip: sunshine-ip
       - port: 47990
         as: 47990
         to:
           - global: true
+            ip: sunshine-ip
       - port: 48010
         as: 48010
         to:
           - global: true
+            ip: sunshine-ip
       - port: 47998
         as: 47998
         proto: udp
         to:
           - global: true
+            ip: sunshine-ip
       - port: 47999
         as: 47999
         proto: udp
         to:
           - global: true
+            ip: sunshine-ip
       - port: 48000
         as: 48000
         proto: udp
         to:
           - global: true
+            ip: sunshine-ip
       - port: 48002
         as: 48002
         proto: udp
         to:
           - global: true
+            ip: sunshine-ip
       - port: 48010
         as: 48010
         proto: udp
         to:
           - global: true
-    endpoints:
-      sunshine-ip:
-        kind: ip
+            ip: sunshine-ip
 
 profiles:
   compute:

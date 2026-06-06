@@ -12,7 +12,7 @@ Decentralized game streaming orchestration: Privy auth, Base wallet funding, Squ
 ## Quick start
 
 1. Copy `.env.example` to `.env` in the repo root and fill in values.
-2. Start Postgres and set `DATABASE_URL`.
+2. Create a [Supabase](https://supabase.com) project and set `DATABASE_URL` to the Postgres connection string (project dashboard → **Connect** button at the top).
 3. Install and run:
 
 ```bash
@@ -26,6 +26,7 @@ pnpm dev:web      # :3000
 
 See [.env.example](.env.example) for required variables. Key services:
 
+- **Supabase** — managed Postgres (`DATABASE_URL` from project settings)
 - **Privy** — Discord, Twitter/X, wallet login + embedded Base wallet
 - **Squid Router** — Base ETH/USDC → AKT (`x-integrator-id` header)
 - **Akash** — `AKASH_RPC`, `AKASH_GRPC`, `SUNSHINE_IMAGE`

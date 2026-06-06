@@ -139,8 +139,8 @@ export function DepositPanel({
     <div className="card">
       <h3 style={{ marginTop: 0 }}>Deposit &amp; Swap</h3>
       <p style={{ color: "var(--muted)", fontSize: "0.875rem" }}>
-        Deposit to your Privy Base wallet, then swap to AKT on your Akash
-        wallet. Required deposit: ~{pricing.depositAkt} AKT
+        Send funds to your Base wallet below, then confirm payment to reserve
+        your session. Estimated total: ~${session.specs?.budgetUsd ?? "—"}
       </p>
 
       {baseAddress && (
@@ -174,7 +174,7 @@ export function DepositPanel({
 
       {quoteToAmount && (
         <p style={{ fontSize: "0.875rem" }}>
-          Estimated AKT: {(Number(quoteToAmount) / 1_000_000).toFixed(4)}
+          Quote ready — proceed when your Base balance is sufficient.
         </p>
       )}
 
@@ -187,7 +187,7 @@ export function DepositPanel({
           disabled={loading || !embeddedWallet}
           style={{ marginTop: "1rem" }}
         >
-          {loading ? "Swapping…" : "Swap Base → AKT"}
+          {loading ? "Processing…" : "Pay & reserve session"}
         </button>
       ) : null}
     </div>

@@ -1,3 +1,4 @@
+import "./env.js";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -15,6 +16,7 @@ import {
   syncUser,
   teardownSession,
 } from "./sessions/service.js";
+import { provisionAkashWallet } from "./wallets/provision.js";
 import { registerShutdownHandler } from "./sessions/teardown.js";
 import type {
   AuthSyncRequest,
@@ -53,11 +55,12 @@ app.post("/auth/sync", async (c) => {
       return c.json({ error: "baseWalletAddress required" }, 400);
     }
     await syncUser(privyUserId, body.baseWalletAddress);
+    const akashAddress = await provisionAkashWallet(privyUserId);
     const user = await getUser(privyUserId);
     return c.json({
       privyUserId,
       baseWalletAddress: user?.baseWalletAddress ?? body.baseWalletAddress,
-      akashAddress: null,
+      akashAddress,
     });
   } catch (e) {
     return c.json(

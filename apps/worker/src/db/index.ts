@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import postgres, { type Options } from "postgres";
 import * as schema from "./schema.js";
 
 const connectionString = process.env.DATABASE_URL;
@@ -7,7 +7,24 @@ if (!connectionString) {
   throw new Error("DATABASE_URL is required");
 }
 
-const client = postgres(connectionString);
+function getPostgresOptions(url: string): Options<Record<string, never>> {
+  const isSupabase = /supabase\.(com|co)/.test(url);
+  const isTransactionPooler = /:6543(\/|$)/.test(url);
+  const options: Options<Record<string, never>> = {};
+
+  if (isSupabase || process.env.DATABASE_SSL === "true") {
+    options.ssl = "require";
+  }
+
+  // Supabase transaction pooler (port 6543) does not support prepared statements.
+  if (isTransactionPooler) {
+    options.prepare = false;
+  }
+
+  return options;
+}
+
+const client = postgres(connectionString, getPostgresOptions(connectionString));
 export const db = drizzle(client, { schema });
 
 export async function initDb() {

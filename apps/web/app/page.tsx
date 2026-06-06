@@ -170,7 +170,7 @@ export default function HomePage() {
 
       {!authenticated && (
         <div className="card">
-          <p>Sign in to provision an Akash wallet and launch a stream.</p>
+          <p>Sign in to launch a stream session.</p>
         </div>
       )}
 
@@ -193,7 +193,7 @@ export default function HomePage() {
             onClick={handleCreateSession}
             disabled={loading}
           >
-            {loading ? "Provisioning…" : "Create session"}
+            {loading ? "Starting…" : "Create session"}
           </button>
         </div>
       )}

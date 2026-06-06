@@ -1,0 +1,103 @@
+Game Stream Launch — build & run commands
+==========================================
+
+Prerequisites
+-------------
+- Node.js 20+ (https://nodejs.org)
+- pnpm 9.15.0
+
+Install pnpm (if needed):
+  npm install -g pnpm@9.15.0
+  pnpm -v
+
+Note: On Windows, if "corepack enable" fails with EPERM, use npm install -g above instead.
+
+
+First-time setup
+----------------
+1. Copy environment file:
+     copy .env.example .env        (Windows)
+     cp .env.example .env          (macOS/Linux)
+
+2. Fill in .env (repo root):
+   - DATABASE_URL          (Supabase session pooler recommended on Windows)
+   - PRIVY_APP_ID / PRIVY_APP_SECRET
+   - NEXT_PUBLIC_PRIVY_APP_ID  (same as PRIVY_APP_ID)
+   - SQUID_INTEGRATOR_ID
+   - SUNSHINE_IMAGE=cobymnun/game-stream-container:latest
+
+3. Install dependencies:
+     pnpm install
+
+4. Build shared package (required before dev/build):
+     pnpm --filter @game-stream/shared build
+
+
+Development (two terminals)
+---------------------------
+Terminal 1 — worker (http://localhost:4000):
+  pnpm dev:worker
+
+Terminal 2 — web (http://localhost:3000):
+  pnpm dev:web
+
+Or both via turbo:
+  pnpm dev
+
+
+Health check
+------------
+  curl.exe http://localhost:4000/health
+  (expect: {"ok":true})
+
+
+Build (production)
+------------------
+Full monorepo build:
+  pnpm build
+
+Individual packages:
+  pnpm --filter @game-stream/shared build
+  pnpm --filter @game-stream/worker build
+  pnpm --filter @game-stream/web build
+
+
+Run production builds
+---------------------
+Worker:
+  pnpm --filter @game-stream/worker start
+
+Web:
+  pnpm --filter @game-stream/web start
+
+
+Lint
+----
+  pnpm lint
+
+
+Service tests (no Privy / no UI)
+---------------------------------
+Wallet gen, Squid quote, SDL validate, Akash RPC:
+  pnpm test:services
+
+Optional live Akash deploy test — add to .env first:
+  AKASH_MNEMONIC=your twenty four word phrase
+  AKASH_DEPOSIT=5000000
+Then:
+  node deploy-test.mjs
+
+
+New machine checklist
+---------------------
+  git clone <repo>
+  copy .env manually (not in git) or copy .env.example .env and fill in
+  pnpm install
+  pnpm --filter @game-stream/shared build
+  pnpm dev:worker
+  pnpm dev:web
+  open http://localhost:3000
+
+Privy dashboard (for Discord/X login):
+  - Enable Discord + Twitter under Login methods
+  - Add http://localhost:3000 under Allowed domains

@@ -1,4 +1,4 @@
-import { generateManifest } from "@akashnetwork/chain-sdk";
+import { generateManifest, yaml } from "@akashnetwork/chain-sdk";
 import { GPU_CATALOG, type GpuId } from "@game-stream/shared";
 import Handlebars from "handlebars";
 import { readFile } from "node:fs/promises";
@@ -6,7 +6,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const SDL_TEMPLATE_PATH = join(__dirname, "../../../../../sdl/sunshine-stream.yaml");
+const SDL_TEMPLATE_PATH = join(__dirname, "../../../../sdl/sunshine-stream.yaml");
 
 export interface SdlTemplateVars {
   sunshineImage: string;
@@ -54,7 +54,8 @@ export async function renderSdl(vars: SdlTemplateVars): Promise<string> {
 }
 
 export async function validateAndParseSdl(yamlContent: string) {
-  const manifest = generateManifest(yamlContent, "mainnet");
+  const sdl = yaml.raw(yamlContent);
+  const manifest = generateManifest(sdl, "mainnet");
   if (!manifest.ok) {
     throw new Error(
       `SDL validation failed: ${JSON.stringify(manifest.value)}`

@@ -1,4 +1,3 @@
-import { EnglishMnemonic, Random } from "@cosmjs/crypto";
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { eq } from "drizzle-orm";
 import { db } from "../db/index.js";
@@ -10,10 +9,13 @@ export async function generateAkashWallet(): Promise<{
   mnemonic: string;
   address: string;
 }> {
-  const mnemonic = new EnglishMnemonic(Random.getBytes(32)).toString();
-  const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
+  const wallet = await DirectSecp256k1HdWallet.generate(24, {
     prefix: "akash",
   });
+  const mnemonic = wallet.mnemonic;
+  if (!mnemonic) {
+    throw new Error("Failed to generate Akash wallet mnemonic");
+  }
   const [{ address }] = await wallet.getAccounts();
   return { mnemonic, address };
 }
