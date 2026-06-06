@@ -1,0 +1,16 @@
+{
+  "name": "game-stream-launch",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "dev:web": "pnpm --filter @game-stream/web dev",
+    "dev:worker": "pnpm --filter @game-stream/worker dev"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

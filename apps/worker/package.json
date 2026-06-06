@@ -1,0 +1,31 @@
+{
+  "name": "@game-stream/worker",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@akashnetwork/chain-sdk": "1.0.0-alpha.34",
+    "@aws-sdk/client-kms": "^3.826.0",
+    "@cosmjs/amino": "^0.33.1",
+    "@cosmjs/crypto": "^0.33.1",
+    "@cosmjs/proto-signing": "^0.33.1",
+    "@game-stream/shared": "workspace:*",
+    "@hono/node-server": "^1.14.4",
+    "@privy-io/server-auth": "^1.22.0",
+    "drizzle-orm": "^0.44.2",
+    "handlebars": "^4.7.8",
+    "hono": "^4.8.3",
+    "postgres": "^3.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.30",
+    "drizzle-kit": "^0.31.1",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}
