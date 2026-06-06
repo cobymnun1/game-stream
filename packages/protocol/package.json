@@ -1,0 +1,14 @@
+{
+  "name": "@basehack/protocol",
+  "private": true,
+  "version": "0.1.0",
+  "description": "WASM build of moonlight-common-c for production use",
+  "scripts": {
+    "build": "cmake --build build --target moonlight_wasm",
+    "configure": "emcmake cmake -B build -DCMAKE_BUILD_TYPE=Release .",
+    "clean": "rm -rf build dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0"
+  }
+}

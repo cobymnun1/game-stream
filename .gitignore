@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.turbo/
+*.wbn
+*.swbn
+*.local
+.env*
+!.env.example
+# Secrets / keys
+*.pem
+*.key
+iwa-key.pem
+.next/
+.DS_Store
+.claude/settings.local.json
+tsconfig.tsbuildinfo
+*.tsbuildinfo

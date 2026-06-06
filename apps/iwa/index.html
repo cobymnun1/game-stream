@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <title>Moonlight Stream</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: system-ui, sans-serif;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #stream-canvas {
+      display: none;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    #connect-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 320px;
+    }
+
+    #connect-form h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    #connect-form input {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.95rem;
+      padding: 10px 12px;
+      outline: none;
+    }
+
+    #connect-form input:focus { border-color: #555; }
+
+    #connect-btn {
+      background: #1a6ef5;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 11px;
+    }
+
+    #connect-btn:hover { background: #1560d4; }
+    #connect-btn:disabled { background: #333; cursor: default; }
+
+    #status {
+      font-size: 0.8rem;
+      color: #888;
+      min-height: 1.2em;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stream-canvas"></canvas>
+
+  <form id="connect-form">
+    <h1>Moonlight Stream</h1>
+    <input id="host-input" type="text" placeholder="Host (e.g. 1.2.3.4)" required />
+    <input id="port-input" type="number" placeholder="Port (default 47984)" value="47984" min="1" max="65535" />
+    <button id="connect-btn" type="submit">Connect</button>
+    <div id="status"></div>
+  </form>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
