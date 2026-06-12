@@ -6,7 +6,9 @@
 #
 # Built in CI (.github/workflows/build-container.yml) → ghcr.io — no local Docker needed.
 
-FROM lscr.io/linuxserver/steamos:latest
+# Pinned to a dated tag: the :latest manifest has no usable linux/amd64 entry,
+# which breaks buildx ("no match for platform"). Dated tags publish proper amd64.
+FROM lscr.io/linuxserver/steamos:2025-07-12-ls96
 
 # --- Install Sunshine (LizardByte) ---
 ARG SUNSHINE_VERSION=latest
