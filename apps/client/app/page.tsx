@@ -5,7 +5,7 @@ import { GpuSelect } from "@/components/specs/GpuSelect";
 import { ResourceSliders } from "@/components/specs/ResourceSliders";
 import { DepositPanel } from "@/components/funding/DepositPanel";
 import { ConnectionCard } from "@/components/session/ConnectionCard";
-import { createSession, getSession, syncAuth, teardownSession } from "@/lib/api";
+import { createSession, getSession, syncAuth, teardownSession, getConfig, demoDeploy } from "@/lib/api";
 import type { FundingToken, GpuId, Session } from "@basehack/shared";
 import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/navigation";
@@ -28,6 +28,12 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [tearingDown, setTearingDown] = useState(false);
+  const [demoMode, setDemoMode] = useState(false);
+  const [deploying, setDeploying] = useState(false);
+
+  useEffect(() => {
+    getConfig().then((c) => setDemoMode(c.demoMode)).catch(() => {});
+  }, []);
 
   const [gpuId, setGpuId] = useState<GpuId>("rtx4090");
   const [cpuUnits, setCpuUnits] = useState(16);
@@ -128,6 +134,23 @@ export default function HomePage() {
     }
   }
 
+  // Demo: skip Squid swap, deploy directly from the pre-funded platform wallet
+  async function handleDemoDeploy() {
+    if (!session) return;
+    setDeploying(true);
+    setError(null);
+    try {
+      const token = await getAccessToken();
+      if (!token) throw new Error("Not authenticated");
+      const s = await demoDeploy(token, session.id);
+      setSession(s);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Demo deploy failed");
+    } finally {
+      setDeploying(false);
+    }
+  }
+
   const showSpecs =
     !session ||
     session.status === "spec_select" ||
@@ -198,7 +221,30 @@ export default function HomePage() {
         </div>
       )}
 
-      {session?.pricing && showDeposit && !showConnection && (
+      {/* Demo mode: skip swap, deploy from pre-funded wallet */}
+      {session?.pricing && showDeposit && !showConnection && demoMode && (
+        <div className="card" style={{ marginTop: "1rem" }}>
+          <h3 style={{ marginTop: 0 }}>Demo deploy</h3>
+          <p style={{ color: "var(--muted)", fontSize: "0.875rem" }}>
+            Demo mode — skipping the cross-chain swap and deploying directly to
+            Akash from the pre-funded platform wallet (paid in AKT).
+          </p>
+          <p style={{ fontSize: "0.875rem" }}>
+            Estimated deposit: <strong>{session.pricing.depositAkt} AKT</strong>
+          </p>
+          <button
+            className="btn"
+            onClick={handleDemoDeploy}
+            disabled={deploying}
+            style={{ marginTop: "0.5rem" }}
+          >
+            {deploying ? "Deploying to Akash…" : "Deploy to Akash (skip swap)"}
+          </button>
+        </div>
+      )}
+
+      {/* Normal mode: Squid deposit + swap */}
+      {session?.pricing && showDeposit && !showConnection && !demoMode && (
         <div style={{ marginTop: "1rem" }}>
           <DepositPanel
             session={session}

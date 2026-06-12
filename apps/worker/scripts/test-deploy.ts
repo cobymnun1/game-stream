@@ -36,8 +36,8 @@ function requireEnv(name: string): string {
   return v;
 }
 
-// Query AKT balance via REST (no SDK needed, works from any machine)
-async function fetchBalance(address: string): Promise<bigint> {
+// Query a denom balance via REST (no SDK needed, works from any machine)
+async function fetchBalance(address: string, denom = "uakt"): Promise<bigint> {
   const endpoints = [
     "https://akash-api.polkachu.com",
     "https://api.akashnet.net",
@@ -52,13 +52,13 @@ async function fetchBalance(address: string): Promise<bigint> {
       const data = (await res.json()) as {
         balances: { denom: string; amount: string }[];
       };
-      const uakt = data.balances.find((b) => b.denom === "uakt");
-      return BigInt(uakt?.amount ?? "0");
+      const found = data.balances.find((b) => b.denom === denom);
+      return BigInt(found?.amount ?? "0");
     } catch {
       /* try next endpoint */
     }
   }
-  return -1n; // unknown
+  return 0n;
 }
 
 async function main() {
@@ -93,20 +93,13 @@ async function main() {
       `max ${pricing.maxUaktPerBlock} uakt/block`
   );
 
-  // ── Balance check ───────────────────────────────────────────────────────
-  const balance = await fetchBalance(ownerAddress);
-  if (balance === -1n) {
-    log("⚠️  Could not fetch balance (RPC unreachable) — proceeding anyway");
-  } else {
-    log(`Balance: ${Number(balance) / 1e6} AKT (${balance} uakt)`);
-    if (balance < BigInt(pricing.depositUakt)) {
-      err(
-        `❌ Insufficient AKT. Need ${pricing.depositUakt} uakt, have ${balance} uakt.`
-      );
-      err(`   Fund this address: ${ownerAddress}`);
-      process.exit(1);
-    }
-  }
+  // ── Balance (informational) ───────────────────────────────────────────────
+  // The deposit is in uact (Akash Credits). runDeployJob auto-mints ACT from AKT
+  // if needed and checks uakt for gas — so no hard gate here.
+  const aktBalance = await fetchBalance(ownerAddress, "uakt");
+  const actBalance = await fetchBalance(ownerAddress, "uact");
+  log(`Balance: ${Number(aktBalance) / 1e6} AKT (gas) | ${Number(actBalance) / 1e6} ACT (deposit credits)`);
+  log(`Deposit needed: ${Number(pricing.depositUakt) / 1e6} ACT — runDeployJob will mint from AKT if short.`);
 
   log("Specs:", { gpuId, cpuUnits, memoryGb });
   log("Image:", process.env.SUNSHINE_IMAGE ?? "(default)");
@@ -133,18 +126,35 @@ async function main() {
   }
 
   try {
-    const result = await runDeployJob({
-      mnemonic,
-      ownerAddress,
-      specs: { gpuId, cpuUnits, memoryGb, durationHours, budgetUsd, fundingToken: "USDC" },
-      pricing,
-      callbacks: {
-        onStatus: (status, extra) => {
-          if (extra?.dseq) activeDseq = Number(extra.dseq);
-          log(`status → ${status}${extra ? " " + JSON.stringify(extra) : ""}`);
-        },
-      },
-    });
+    // Auto-retry on "no bids" — IP+GPU providers are intermittent
+    const maxRetries = Number(process.env.MAX_RETRIES ?? 8);
+    let result;
+    for (let attempt = 1; ; attempt++) {
+      try {
+        result = await runDeployJob({
+          mnemonic,
+          ownerAddress,
+          specs: { gpuId, cpuUnits, memoryGb, durationHours, budgetUsd, fundingToken: "USDC" },
+          pricing,
+          callbacks: {
+            onStatus: (status, extra) => {
+              if (extra?.dseq) activeDseq = Number(extra.dseq);
+              log(`status → ${status}${extra ? " " + JSON.stringify(extra) : ""}`);
+            },
+          },
+        });
+        break; // success
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        if (msg.includes("No bids") && attempt < maxRetries) {
+          log(`No bids (attempt ${attempt}/${maxRetries}) — retrying in 10s…`);
+          activeDseq = null;
+          await new Promise((r) => setTimeout(r, 10_000));
+          continue;
+        }
+        throw e;
+      }
+    }
 
     activeDseq = result.dseq;
 

@@ -1,9 +1,11 @@
+// SDK Bid shape: { id: BidID, price: DecCoin, state }
+// (the field is `id`, not `bidId`; price is a decimal coin)
 interface BidEntry {
   bid: {
     price: { amount: string; denom: string };
-    bidId: {
+    id: {
       owner: string;
-      dseq: number;
+      dseq: number | string | bigint;
       gseq: number;
       oseq: number;
       provider: string;

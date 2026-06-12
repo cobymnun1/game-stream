@@ -294,6 +294,101 @@ export async function startDeploy(
   startDeployInBackground(sessionId, privyUserId);
 }
 
+// ── DEMO MODE ────────────────────────────────────────────────────────────────
+// Skips Squid swap entirely and deploys using a single pre-funded platform
+// wallet (DEMO_AKASH_MNEMONIC). Marks swap as "arrived" so the UI shows the
+// post-swap pipeline, then runs the real Akash deploy from the funded wallet.
+
+export async function startDemoDeploy(privyUserId: string, sessionId: string) {
+  if (process.env.DEMO_MODE !== "true") {
+    throw new Error("Demo mode is not enabled");
+  }
+  const session = await getSession(sessionId, privyUserId);
+  if (!session) throw new Error("Session not found");
+  if (!session.specs || !session.pricing) {
+    throw new Error("Session missing specs/pricing");
+  }
+
+  // Mark swap as skipped/arrived so the UI advances past the deposit step
+  await updateSession(sessionId, {
+    status: "swap_complete",
+    swap: {
+      ...INITIAL_SWAP,
+      status: "arrived",
+      error: null,
+    },
+  });
+
+  startDemoDeployInBackground(sessionId, privyUserId);
+}
+
+async function startDemoDeployInBackground(
+  sessionId: string,
+  privyUserId: string
+) {
+  const session = await getSession(sessionId, privyUserId);
+  if (!session?.specs || !session.pricing) {
+    await updateSession(sessionId, {
+      status: "failed",
+      error: "Missing session specs or pricing",
+    });
+    return;
+  }
+
+  const demoMnemonic = process.env.DEMO_AKASH_MNEMONIC;
+  if (!demoMnemonic) {
+    await updateSession(sessionId, {
+      status: "failed",
+      error: "DEMO_AKASH_MNEMONIC not configured",
+    });
+    return;
+  }
+
+  let mnemonic = demoMnemonic;
+  try {
+    const { DirectSecp256k1HdWallet } = await import("@cosmjs/proto-signing");
+    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
+      prefix: "akash",
+    });
+    const [{ address }] = await wallet.getAccounts();
+
+    const result = await runDeployJob({
+      mnemonic,
+      ownerAddress: address,
+      specs: session.specs,
+      pricing: session.pricing,
+      callbacks: {
+        onStatus: async (status, extra) => {
+          await updateSession(sessionId, {
+            status,
+            ...(extra?.dseq ? { activeDseq: String(extra.dseq) } : {}),
+          });
+        },
+      },
+    });
+
+    trackActiveDeployment(sessionId, address, result.dseq);
+
+    await updateSession(sessionId, {
+      status: "ready",
+      activeDseq: String(result.dseq),
+      connection: {
+        hostname: result.connection.hostname,
+        forwardedPorts: result.connection.forwardedPorts,
+        sunshineCredentials: result.connection.sunshineCredentials,
+        leaseId: result.leaseId,
+        dseq: result.dseq,
+        provider: result.provider,
+      },
+    });
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Deploy failed";
+    await updateSession(sessionId, { status: "failed", error: message });
+  } finally {
+    mnemonic = "";
+  }
+}
+
 async function startDeployInBackground(
   sessionId: string,
   privyUserId: string

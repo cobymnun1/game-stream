@@ -1,6 +1,11 @@
 import { Secp256k1HdWallet } from "@cosmjs/amino";
 import { JwtTokenManager, manifestToSortedJSON } from "@akashnetwork/chain-sdk";
 
+// Akash providers serve their REST API over self-signed TLS certs by design.
+// Node's fetch rejects these ("fetch failed"), so disable cert verification for
+// provider communication — this is the standard Akash provider-comms approach.
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 export async function makeJwt(mnemonic: string): Promise<string> {
   const w = await Secp256k1HdWallet.fromMnemonic(mnemonic, {
     prefix: "akash",

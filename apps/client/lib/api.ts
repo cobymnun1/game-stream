@@ -118,3 +118,19 @@ export async function teardownSession(
 ): Promise<Session> {
   return workerFetch(`/sessions/${sessionId}`, token, { method: "DELETE" });
 }
+
+export async function getConfig(): Promise<{ demoMode: boolean }> {
+  const res = await fetch(`${WORKER_URL}/config`);
+  if (!res.ok) return { demoMode: false };
+  return res.json() as Promise<{ demoMode: boolean }>;
+}
+
+// Demo: skip Squid swap, deploy directly from the pre-funded platform wallet
+export async function demoDeploy(
+  token: string,
+  sessionId: string
+): Promise<Session> {
+  return workerFetch(`/sessions/${sessionId}/demo-deploy`, token, {
+    method: "POST",
+  });
+}

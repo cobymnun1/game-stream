@@ -13,6 +13,7 @@ import {
 import { watchLeaseUntilReady } from "./lease-watch.js";
 import { sendManifest } from "./manifest.js";
 import { buildSdlVars, renderSdl, validateAndParseSdl } from "./render-sdl.js";
+import { fetchAktUsdPrice } from "../swap/pricing.js";
 
 export interface DeployCallbacks {
   onStatus: (status: SessionStatus, extra?: Record<string, unknown>) => void;
@@ -29,14 +30,12 @@ export interface DeployResult {
   };
 }
 
-async function getAktBalance(
+async function getBalance(
   sdk: ReturnType<typeof createChainNodeSDK>,
-  address: string
+  address: string,
+  denom: string
 ): Promise<bigint> {
-  const res = await sdk.cosmos.bank.v1beta1.getBalance({
-    address,
-    denom: "uakt",
-  });
+  const res = await sdk.cosmos.bank.v1beta1.getBalance({ address, denom });
   return BigInt(res.balance?.amount ?? "0");
 }
 
@@ -72,11 +71,57 @@ export async function runDeployJob(params: {
     tx: { signer: txClient },
   });
 
-  const balance = await getAktBalance(sdk, ownerAddress);
-  const required = BigInt(pricing.depositUakt);
-  if (balance < required) {
+  // Deposit is in uact (USD-pegged Akash Credit). Gas is paid in uakt.
+  // Akash mainnet requires uact for new deployments (AKT rejected). If the
+  // wallet has no/low uact, mint it by burning a little AKT via x/bme MsgMintACT.
+  const required = BigInt(pricing.depositUakt); // value is uact
+  let uactBalance = await getBalance(sdk, ownerAddress, "uact");
+
+  if (uactBalance < required) {
+    callbacks.onStatus("deploying"); // surface "minting credits" stage as deploying
+    const aktUsdPrice = await fetchAktUsdPrice();
+
+    // x/bme enforces a minimum mint (min_mint, currently 10 ACT = $10).
+    // Mint at least that much; deposit uses what it needs, rest stays as credit.
+    const MIN_MINT_UACT = 10_000_000n; // 10 ACT = $10
+    const targetUact = required > MIN_MINT_UACT ? required : MIN_MINT_UACT;
+    const usdToMint = Number(targetUact) / 1_000_000;
+    // AKT to burn = USD / price, +25% buffer for price drift + mint spread
+    const aktToBurn = (usdToMint / aktUsdPrice) * 1.25;
+    const uaktToBurn = BigInt(Math.ceil(aktToBurn * 1_000_000));
+
+    console.log(
+      `[deploy] minting ${usdToMint} ACT by burning ~${(Number(uaktToBurn) / 1e6).toFixed(3)} AKT`
+    );
+
+    // Explicit fee skips the SDK's gas-estimation simulation, which runs in a
+    // stale query context and trips the oracle's tight max_price_staleness (4 blocks).
+    await sdk.akash.bme.v1.mintACT(
+      {
+        owner: ownerAddress,
+        to: ownerAddress, // minting ACT — destination must equal signer
+        coinsToBurn: { denom: "uakt", amount: uaktToBurn.toString() },
+      },
+      { fee: { amount: [{ denom: "uakt", amount: "20000" }], gas: "400000" } }
+    );
+
+    // Poll for the minted credits to reflect (a few blocks)
+    for (let i = 0; i < 15 && uactBalance < required; i++) {
+      await new Promise((r) => setTimeout(r, 3000));
+      uactBalance = await getBalance(sdk, ownerAddress, "uact");
+    }
+    if (uactBalance < required) {
+      throw new Error(
+        `ACT mint did not yield enough credits in time: have ${uactBalance} uact, need ${required} uact`
+      );
+    }
+    console.log(`[deploy] ACT minted — balance now ${uactBalance} uact`);
+  }
+
+  const uaktBalance = await getBalance(sdk, ownerAddress, "uakt");
+  if (uaktBalance < 200000n) {
     throw new Error(
-      `Insufficient AKT balance: have ${balance} uakt, need ${required} uakt`
+      `Insufficient uakt for gas: have ${uaktBalance} uakt (need ~0.2 AKT for fees).`
     );
   }
 
@@ -102,16 +147,22 @@ export async function runDeployJob(params: {
 
   // v1beta4 deposit shape: { amount: Coin, sources: [Source.balance=1] }
   // Cast bypasses optional-field strictness (reclamation); runtime shape is correct.
-  await sdk.akash.deployment.v1beta4.createDeployment({
-    id: { owner: ownerAddress, dseq },
-    groups: groupSpecs,
-    hash,
-    deposit: {
-      amount: { denom: "uakt", amount: pricing.depositUakt },
-      sources: [1], // Source.balance — fund from owner's account balance
-    },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } as any);
+  await sdk.akash.deployment.v1beta4.createDeployment(
+    {
+      id: { owner: ownerAddress, dseq },
+      groups: groupSpecs,
+      hash,
+      deposit: {
+        // Akash mainnet requires uact (USD-pegged credits) for new deployments;
+        // uakt is rejected (only valid for topping up existing deployments).
+        amount: { denom: "uact", amount: pricing.depositUakt },
+        sources: [1], // Source.balance — fund from owner's account balance
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any,
+    // explicit fee → skip gas-estimation simulation
+    { fee: { amount: [{ denom: "uakt", amount: "25000" }], gas: "500000" } }
+  );
 
   callbacks.onStatus("bid_wait", { dseq });
 
@@ -145,10 +196,15 @@ export async function runDeployJob(params: {
     throw new Error("All bids exceed price ceiling");
   }
 
-  const { bidId } = selectedBid;
+  // SDK Bid uses `id` (a BidID), not `bidId`
+  const bidId = selectedBid.id;
   const provider = bidId.provider;
 
-  await sdk.akash.market.v1beta5.createLease({ bidId: bidId as any });
+  // Bid exposes the id as `.id`, but MsgCreateLease's field is `bidId`
+  await sdk.akash.market.v1beta5.createLease(
+    { bidId } as any,
+    { fee: { amount: [{ denom: "uakt", amount: "25000" }], gas: "500000" } }
+  );
   callbacks.onStatus("lease_created", { provider, dseq });
 
   const info = await sdk.akash.provider.v1beta4.getProvider({

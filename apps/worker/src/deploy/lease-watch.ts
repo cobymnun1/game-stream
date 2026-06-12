@@ -21,14 +21,19 @@ interface LeaseStatusService {
   available_replicas?: number;
 }
 
+interface ForwardedPortEntry {
+  port: number;
+  externalPort: number;
+  proto?: string;
+  host?: string;
+}
+
+// The Akash provider returns `services` and `forwarded_ports` as OBJECTS
+// (maps keyed by service name), not arrays.
 interface LeaseStatusResponse {
-  services?: LeaseStatusService[];
-  forwarded_ports?: Array<{
-    port: number;
-    externalPort: number;
-    proto?: string;
-    host?: string;
-  }>;
+  services?: Record<string, LeaseStatusService>;
+  forwarded_ports?: Record<string, ForwardedPortEntry[]>;
+  ips?: { ip: string }[] | null;
   uris?: string[];
 }
 
@@ -39,35 +44,42 @@ export interface LeaseReadyResult {
 }
 
 function parseHostname(status: LeaseStatusResponse): string {
+  // Prefer dedicated IP if present
+  if (status.ips && status.ips.length && status.ips[0]?.ip) return status.ips[0].ip;
   if (status.uris?.length) {
     const uri = status.uris[0]!;
-    try { return new URL(uri).hostname; } catch { return uri; }
+    try { return new URL(uri.startsWith("http") ? uri : `http://${uri}`).hostname; } catch { return uri; }
   }
-  for (const svc of status.services ?? []) {
+  for (const svc of Object.values(status.services ?? {})) {
     if (svc.uris?.length) {
       const uri = svc.uris[0]!;
-      try { return new URL(uri).hostname; } catch { return uri; }
+      try { return new URL(uri.startsWith("http") ? uri : `http://${uri}`).hostname; } catch { return uri; }
     }
+  }
+  // Fall back to the host on any forwarded port
+  for (const entries of Object.values(status.forwarded_ports ?? {})) {
+    for (const p of entries) if (p.host) return p.host;
   }
   return "";
 }
 
-function parseForwardedPorts(
-  status: LeaseStatusResponse
-): ForwardedPort[] {
-  const ports = status.forwarded_ports ?? [];
-  return ports.map((p) => ({
-    port: p.port,
-    externalPort: p.externalPort,
-    proto: (p.proto?.toLowerCase() === "udp" ? "udp" : "tcp") as
-      | "tcp"
-      | "udp",
-    host: p.host,
-  }));
+function parseForwardedPorts(status: LeaseStatusResponse): ForwardedPort[] {
+  const out: ForwardedPort[] = [];
+  for (const entries of Object.values(status.forwarded_ports ?? {})) {
+    for (const p of entries) {
+      out.push({
+        port: p.port,
+        externalPort: p.externalPort,
+        proto: (p.proto?.toLowerCase() === "udp" ? "udp" : "tcp") as "tcp" | "udp",
+        host: p.host,
+      });
+    }
+  }
+  return out;
 }
 
 function isLeaseServicesReady(status: LeaseStatusResponse): boolean {
-  const services = status.services ?? [];
+  const services = Object.values(status.services ?? {});
   if (services.length === 0) return false;
   return services.every(
     (s) =>

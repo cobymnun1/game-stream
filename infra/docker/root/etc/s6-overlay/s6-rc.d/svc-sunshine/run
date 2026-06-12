@@ -1,0 +1,20 @@
+#!/usr/bin/with-contenv bash
+# Start Sunshine once the KasmVNC X display (:1) is up, capturing the same
+# desktop the web client uses. Runs as the LinuxServer default user 'abc'.
+
+export DISPLAY=:1
+export HOME=/config
+
+# Wait for the X display to be ready (desktop service brings it up)
+for i in $(seq 1 90); do
+  if [ -e /tmp/.X11-unix/X1 ]; then break; fi
+  sleep 2
+done
+sleep 5  # let the desktop settle
+
+mkdir -p /config/sunshine
+chown -R abc:abc /config/sunshine 2>/dev/null || true
+
+exec s6-setuidgid abc \
+  env DISPLAY=:1 HOME=/config \
+  sunshine /config/sunshine/sunshine.conf

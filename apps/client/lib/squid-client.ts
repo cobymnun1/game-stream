@@ -40,6 +40,10 @@ export async function executeSquidRoute(params: {
   };
   fundingToken: FundingToken;
 }): Promise<string> {
+  // Ensure the wallet is on Base (8453) before sending — Squid swap txs target Base.
+  // Privy ConnectedWallet starts on chain 1 (Ethereum) by default.
+  await params.wallet.switchChain(base.id);
+
   const provider = await params.wallet.getEthereumProvider();
   const address = params.wallet.address as Hex;
 

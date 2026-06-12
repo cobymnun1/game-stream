@@ -12,6 +12,7 @@ import {
   getShutdownCredentials,
   getUser,
   startDeploy,
+  startDemoDeploy,
   submitSwapTx,
   syncUser,
   teardownSession,
@@ -37,6 +38,11 @@ app.use(
 );
 
 app.get("/health", (c) => c.json({ ok: true }));
+
+// Public config — lets the web UI know if demo mode (skip-swap) is enabled
+app.get("/config", (c) =>
+  c.json({ demoMode: process.env.DEMO_MODE === "true" })
+);
 
 async function authMiddleware(c: {
   req: { header: (name: string) => string | undefined };
@@ -193,6 +199,21 @@ app.post("/sessions/:id/deploy", async (c) => {
   } catch (e) {
     return c.json(
       { error: e instanceof Error ? e.message : "Deploy failed" },
+      400
+    );
+  }
+});
+
+// Demo deploy — skip swap, deploy from the pre-funded platform wallet
+app.post("/sessions/:id/demo-deploy", async (c) => {
+  try {
+    const privyUserId = await authMiddleware(c);
+    await startDemoDeploy(privyUserId, c.req.param("id"));
+    const session = await getSession(c.req.param("id"), privyUserId);
+    return c.json(session);
+  } catch (e) {
+    return c.json(
+      { error: e instanceof Error ? e.message : "Demo deploy failed" },
       400
     );
   }
