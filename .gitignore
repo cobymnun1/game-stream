@@ -1,5 +1,6 @@
 node_modules/
 dist/
+packages/protocol/vendor/
 .turbo/
 *.wbn
 *.swbn

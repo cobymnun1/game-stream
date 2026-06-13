@@ -1,4 +1,4 @@
-import * as forge from 'node-forge'
+import forge from 'node-forge'
 
 // Moonlight pairing uses RSA-2048 + SHA-1 + X.509 self-signed cert.
 // Web Crypto doesn't support RSA PKCS#1 v1.5 raw encrypt/decrypt, so
