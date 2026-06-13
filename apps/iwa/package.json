@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@basehack/protocol": "workspace:*",
     "@peculiar/x509": "^1.12.1",
     "node-forge": "^1.3.1"
   },

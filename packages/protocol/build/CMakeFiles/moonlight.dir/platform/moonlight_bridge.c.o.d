@@ -1,0 +1,27 @@
+CMakeFiles/moonlight.dir/platform/moonlight_bridge.c.o: \
+  /home/coby/projects/game-stream/packages/protocol/platform/moonlight_bridge.c \
+  /home/coby/emsdk/upstream/lib/clang/23/include/stdbool.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/stdbool.h \
+  /home/coby/emsdk/upstream/lib/clang/23/include/stdint.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/stdint.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/bits/alltypes.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/compat/stdlib.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/stdlib.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/features.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/alloca.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/compat/string.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/string.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/strings.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/pthread.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/sched.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/compat/time.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/time.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/emscripten.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/em_asm.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/em_js.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/em_macros.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/em_types.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/promise.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/version.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/emscripten/wget.h \
+  /home/coby/projects/game-stream/packages/protocol/vendor/moonlight-common-c/src/Limelight.h

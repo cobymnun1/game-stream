@@ -2,33 +2,60 @@ cmake_minimum_required(VERSION 3.20)
 project(moonlight_wasm)
 
 # Requires Emscripten: https://emscripten.org/docs/getting_started/
-# Build: emcmake cmake -B build && cmake --build build
+# Setup: pnpm --filter @basehack/protocol fetch:moonlight
+# Build: emcmake cmake -B build && cmake --build build --target moonlight
 
 set(CMAKE_C_STANDARD 11)
-set(SRC_DIR ${CMAKE_SOURCE_DIR}/src/moonlight-common-c/src)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+
+set(VENDOR_DIR ${CMAKE_SOURCE_DIR}/vendor/moonlight-common-c)
+set(SRC_DIR ${VENDOR_DIR}/src)
+
+if (NOT EXISTS ${SRC_DIR}/Limelight.h)
+  message(FATAL_ERROR
+    "moonlight-common-c is missing. Run: pnpm --filter @basehack/protocol fetch:moonlight")
+endif()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/dist)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/dist)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+# moonlight's stream lifecycle relies on real OS threads (control/video/audio
+# receive loops). Compile EVERY object (enet + moonlight-common-c + platform)
+# with -pthread so atomics/TLS ABI is consistent across the whole link.
+add_compile_options(-pthread)
+
+add_subdirectory(${VENDOR_DIR}/enet ${CMAKE_BINARY_DIR}/enet)
+
+file(GLOB MOONLIGHT_COMMON_SOURCES CONFIGURE_DEPENDS ${SRC_DIR}/*.c)
+list(REMOVE_ITEM MOONLIGHT_COMMON_SOURCES ${SRC_DIR}/PlatformSockets.c)
+list(REMOVE_ITEM MOONLIGHT_COMMON_SOURCES ${SRC_DIR}/PlatformCrypto.c)
 
 add_executable(moonlight
-  ${SRC_DIR}/AudioStream.c
-  ${SRC_DIR}/ByteBuffer.c
-  ${SRC_DIR}/Connection.c
-  ${SRC_DIR}/ControlStream.c
-  ${SRC_DIR}/InputStream.c
-  ${SRC_DIR}/Misc.c
-  ${SRC_DIR}/Platform.c
-  ${SRC_DIR}/PlatformCrypto.c
-  ${SRC_DIR}/PlatformSockets.c
-  ${SRC_DIR}/RtpAudioQueue.c
-  ${SRC_DIR}/RtpVideoQueue.c
-  ${SRC_DIR}/RtspConnection.c
-  ${SRC_DIR}/RtspParser.c
-  ${SRC_DIR}/SdpGenerator.c
-  ${SRC_DIR}/VideoDepacketizer.c
-  ${SRC_DIR}/VideoStream.c
-  ${SRC_DIR}/rswrapper.c
-  js/socket-bridge.c
+  ${MOONLIGHT_COMMON_SOURCES}
+  platform/moonlight_bridge.c
+  platform/platform_web_crypto.c
+  platform/platform_web.c
+  platform/enet_web.c
 )
 
-target_include_directories(moonlight PRIVATE ${SRC_DIR})
+target_include_directories(moonlight SYSTEM PRIVATE
+  ${SRC_DIR}
+  ${VENDOR_DIR}/nanors
+  ${VENDOR_DIR}/nanors/deps
+  ${VENDOR_DIR}/nanors/deps/obl
+)
+
+target_link_libraries(moonlight PRIVATE enet)
+set_property(TARGET moonlight APPEND PROPERTY
+  LINK_DEPENDS ${CMAKE_SOURCE_DIR}/js/socket-bridge.js
+)
+
+target_compile_definitions(moonlight PRIVATE
+  HAS_SOCKLEN_T
+  NDEBUG
+  LC_EMSCRIPTEN_DIRECT_SOCKETS
+)
 
 # Emscripten-specific flags
 set_target_properties(moonlight PROPERTIES
@@ -37,19 +64,45 @@ set_target_properties(moonlight PROPERTIES
 )
 
 target_link_options(moonlight PRIVATE
-  # Enable ASYNCIFY so sync C socket calls can await async JS Direct Sockets
-  "-sASYNCIFY=1"
-  "-sASYNCIFY_IMPORTS=[socket_connect,socket_recv,socket_send,socket_recvfrom,socket_sendto]"
+  # Real pthreads: moonlight runs its receive/decode loops on background
+  # threads. Async JS socket/crypto work is proxied to the main thread (where
+  # the Direct Sockets transport lives) via __proxy:'sync'+__async, so the
+  # worker blocks on a futex without needing ASYNCIFY. This replaces the old
+  # single-threaded ASYNCIFY model (which can't host moonlight's threads).
+  "-pthread"
+  "-sPTHREAD_POOL_SIZE=24"
+  "-sPTHREAD_POOL_SIZE_STRICT=0"
+  # Blocking happens only on worker threads (allowed); the main thread never
+  # blocks. Permit it explicitly so a stray main-thread wait warns instead of
+  # aborting the whole module.
+  "-sALLOW_BLOCKING_ON_MAIN_THREAD=1"
   # Export the functions the JS layer needs to call
-  "-sEXPORTED_FUNCTIONS=[_LiStartConnection,_LiStopConnection,_LiSendKeyboardEvent,_LiSendMouseMoveEvent,_LiSendMouseButtonEvent,_LiRequestIdrFrame,_malloc,_free]"
-  "-sEXPORTED_RUNTIME_METHODS=[ccall,cwrap,UTF8ToString,stringToUTF8]"
+  "-sEXPORTED_FUNCTIONS=[_ml_start_connection,_ml_stop_connection,_ml_interrupt_connection,_ml_send_keyboard,_ml_send_mouse_move,_ml_send_mouse_button,_ml_send_high_res_scroll,_ml_request_idr_frame,_ml_get_estimated_rtt,_malloc,_free]"
+  "-sEXPORTED_RUNTIME_METHODS=[ccall,cwrap,UTF8ToString,stringToUTF8,lengthBytesUTF8,HEAPU8]"
   # Custom socket library (Direct Sockets bridge instead of WebSockets)
   "--js-library=${CMAKE_SOURCE_DIR}/js/socket-bridge.js"
-  # Output as ES module
-  "-sENVIRONMENT=web"
+  # Route moonlight's direct libc recv() calls through our socket bridge
+  "-Wl,--wrap=recv"
+  "-Wl,--wrap=sendto"
+  # Route ENet's control-stream socket I/O through the Direct Sockets bridge
+  # (enet_web.c) instead of raw BSD sockets that can't reach the host.
+  "-Wl,--wrap=enet_socket_create"
+  "-Wl,--wrap=enet_socket_destroy"
+  "-Wl,--wrap=enet_socket_bind"
+  "-Wl,--wrap=enet_socket_get_address"
+  "-Wl,--wrap=enet_socket_set_option"
+  "-Wl,--wrap=enet_socket_get_option"
+  "-Wl,--wrap=enet_socket_connect"
+  "-Wl,--wrap=enet_socket_shutdown"
+  "-Wl,--wrap=enet_socket_send"
+  "-Wl,--wrap=enet_socket_receive"
+  "-Wl,--wrap=enet_socket_wait"
+  # Output as ES module (web + worker, since pthreads spawn Web Workers)
+  "-sENVIRONMENT=web,worker"
   "-sMODULARIZE=1"
   "-sEXPORT_ES6=1"
   "-sEXPORT_NAME=MoonlightModule"
+  "-sALLOW_TABLE_GROWTH=1"
   # Memory
   "-sINITIAL_MEMORY=67108864"  # 64MB
   "-sALLOW_MEMORY_GROWTH=1"

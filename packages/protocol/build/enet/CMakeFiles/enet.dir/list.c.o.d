@@ -1,0 +1,37 @@
+enet/CMakeFiles/enet.dir/list.c.o: \
+  /home/coby/projects/game-stream/packages/protocol/vendor/moonlight-common-c/enet/list.c \
+  /home/coby/projects/game-stream/packages/protocol/vendor/moonlight-common-c/enet/include/enet/enet.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/compat/stdlib.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/stdlib.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/features.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/bits/alltypes.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/alloca.h \
+  /home/coby/projects/game-stream/packages/protocol/vendor/moonlight-common-c/enet/include/enet/unix.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/sys/time.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/sys/select.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/sys/types.h \
+  /home/coby/emsdk/upstream/lib/clang/23/include/endian.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/endian.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/sys/socket.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/bits/socket.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/arpa/inet.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/netinet/in.h \
+  /home/coby/emsdk/upstream/lib/clang/23/include/inttypes.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/inttypes.h \
+  /home/coby/emsdk/upstream/lib/clang/23/include/stdint.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/stdint.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/unistd.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/wasi/api.h \
+  /home/coby/emsdk/upstream/lib/clang/23/include/stddef.h \
+  /home/coby/emsdk/upstream/emscripten/cache/sysroot/include/stddef.h \
+  /home/coby/emsdk/upstream/lib/clang/23/include/__stddef_header_macro.h \
+  /home/coby/emsdk/upstream/lib/clang/23/include/__stddef_ptrdiff_t.h \
+  /home/coby/emsdk/upstream/lib/clang/23/include/__stddef_size_t.h \
+  /home/coby/emsdk/upstream/lib/clang/23/include/__stddef_wchar_t.h \
+  /home/coby/emsdk/upstream/lib/clang/23/include/__stddef_null.h \
+  /home/coby/emsdk/upstream/lib/clang/23/include/__stddef_max_align_t.h \
+  /home/coby/emsdk/upstream/lib/clang/23/include/__stddef_offsetof.h \
+  /home/coby/projects/game-stream/packages/protocol/vendor/moonlight-common-c/enet/include/enet/types.h \
+  /home/coby/projects/game-stream/packages/protocol/vendor/moonlight-common-c/enet/include/enet/protocol.h \
+  /home/coby/projects/game-stream/packages/protocol/vendor/moonlight-common-c/enet/include/enet/list.h \
+  /home/coby/projects/game-stream/packages/protocol/vendor/moonlight-common-c/enet/include/enet/callbacks.h

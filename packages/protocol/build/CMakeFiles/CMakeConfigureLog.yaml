@@ -1,0 +1,467 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CMakeDetermineSystem.cmake:228 (message)"
+      - "CMakeLists.txt:2 (project)"
+    message: |
+      The target system is: Emscripten - 1 - x86
+      The host system is: Linux - 6.17.0-35-generic - x86_64
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:11 (check_function_exists)"
+    checks:
+      - "Looking for fcntl"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-d1Jit1"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-d1Jit1"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAS_FCNTL"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-d1Jit1'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_e482b/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_e482b.dir/build.make CMakeFiles/cmTC_e482b.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-d1Jit1'
+        Building C object CMakeFiles/cmTC_e482b.dir/CheckFunctionExists.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc   -DCHECK_FUNCTION_EXISTS=fcntl -std=gnu11 -MD -MT CMakeFiles/cmTC_e482b.dir/CheckFunctionExists.c.o -MF CMakeFiles/cmTC_e482b.dir/CheckFunctionExists.c.o.d -o CMakeFiles/cmTC_e482b.dir/CheckFunctionExists.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-d1Jit1/CheckFunctionExists.c
+        Linking C executable cmTC_e482b.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e482b.dir/link.txt --verbose=1
+        /home/coby/emsdk/upstream/emscripten/emcc  -DCHECK_FUNCTION_EXISTS=fcntl CMakeFiles/cmTC_e482b.dir/CheckFunctionExists.c.o -o cmTC_e482b.js 
+        wasm-ld: warning: function signature mismatch: fcntl
+        >>> defined as () -> i32 in CMakeFiles/cmTC_e482b.dir/CheckFunctionExists.c.o
+        >>> defined as (i32, i32, i32) -> i32 in /home/coby/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten/libc-debug.a(fcntl.o)
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-d1Jit1'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:12 (check_function_exists)"
+    checks:
+      - "Looking for ioctl"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-dFpICP"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-dFpICP"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAS_IOCTL"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-dFpICP'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_60dcc/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_60dcc.dir/build.make CMakeFiles/cmTC_60dcc.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-dFpICP'
+        Building C object CMakeFiles/cmTC_60dcc.dir/CheckFunctionExists.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc   -DCHECK_FUNCTION_EXISTS=ioctl -std=gnu11 -MD -MT CMakeFiles/cmTC_60dcc.dir/CheckFunctionExists.c.o -MF CMakeFiles/cmTC_60dcc.dir/CheckFunctionExists.c.o.d -o CMakeFiles/cmTC_60dcc.dir/CheckFunctionExists.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-dFpICP/CheckFunctionExists.c
+        Linking C executable cmTC_60dcc.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_60dcc.dir/link.txt --verbose=1
+        /home/coby/emsdk/upstream/emscripten/emcc  -DCHECK_FUNCTION_EXISTS=ioctl CMakeFiles/cmTC_60dcc.dir/CheckFunctionExists.c.o -o cmTC_60dcc.js 
+        wasm-ld: warning: function signature mismatch: ioctl
+        >>> defined as () -> i32 in CMakeFiles/cmTC_60dcc.dir/CheckFunctionExists.c.o
+        >>> defined as (i32, i32, i32) -> i32 in /home/coby/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten/libc-debug.a(ioctl.o)
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-dFpICP'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:13 (check_function_exists)"
+    checks:
+      - "Looking for poll"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-mTNetE"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-mTNetE"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAS_POLL"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-mTNetE'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_5bbd8/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_5bbd8.dir/build.make CMakeFiles/cmTC_5bbd8.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-mTNetE'
+        Building C object CMakeFiles/cmTC_5bbd8.dir/CheckFunctionExists.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc   -DCHECK_FUNCTION_EXISTS=poll -std=gnu11 -MD -MT CMakeFiles/cmTC_5bbd8.dir/CheckFunctionExists.c.o -MF CMakeFiles/cmTC_5bbd8.dir/CheckFunctionExists.c.o.d -o CMakeFiles/cmTC_5bbd8.dir/CheckFunctionExists.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-mTNetE/CheckFunctionExists.c
+        Linking C executable cmTC_5bbd8.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_5bbd8.dir/link.txt --verbose=1
+        /home/coby/emsdk/upstream/emscripten/emcc  -DCHECK_FUNCTION_EXISTS=poll CMakeFiles/cmTC_5bbd8.dir/CheckFunctionExists.c.o -o cmTC_5bbd8.js 
+        wasm-ld: warning: function signature mismatch: poll
+        >>> defined as () -> i32 in CMakeFiles/cmTC_5bbd8.dir/CheckFunctionExists.c.o
+        >>> defined as (i32, i32, i32) -> i32 in /home/coby/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten/libc-debug.a(poll.o)
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-mTNetE'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:14 (check_function_exists)"
+    checks:
+      - "Looking for getaddrinfo"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-PDkyfd"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-PDkyfd"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAS_GETADDRINFO"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-PDkyfd'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_0843d/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_0843d.dir/build.make CMakeFiles/cmTC_0843d.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-PDkyfd'
+        Building C object CMakeFiles/cmTC_0843d.dir/CheckFunctionExists.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc   -DCHECK_FUNCTION_EXISTS=getaddrinfo -std=gnu11 -MD -MT CMakeFiles/cmTC_0843d.dir/CheckFunctionExists.c.o -MF CMakeFiles/cmTC_0843d.dir/CheckFunctionExists.c.o.d -o CMakeFiles/cmTC_0843d.dir/CheckFunctionExists.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-PDkyfd/CheckFunctionExists.c
+        Linking C executable cmTC_0843d.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0843d.dir/link.txt --verbose=1
+        /home/coby/emsdk/upstream/emscripten/emcc  -DCHECK_FUNCTION_EXISTS=getaddrinfo CMakeFiles/cmTC_0843d.dir/CheckFunctionExists.c.o -o cmTC_0843d.js 
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-PDkyfd'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:15 (check_function_exists)"
+    checks:
+      - "Looking for getnameinfo"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-IKuG7T"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-IKuG7T"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAS_GETNAMEINFO"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-IKuG7T'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_51e4f/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_51e4f.dir/build.make CMakeFiles/cmTC_51e4f.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-IKuG7T'
+        Building C object CMakeFiles/cmTC_51e4f.dir/CheckFunctionExists.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc   -DCHECK_FUNCTION_EXISTS=getnameinfo -std=gnu11 -MD -MT CMakeFiles/cmTC_51e4f.dir/CheckFunctionExists.c.o -MF CMakeFiles/cmTC_51e4f.dir/CheckFunctionExists.c.o.d -o CMakeFiles/cmTC_51e4f.dir/CheckFunctionExists.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-IKuG7T/CheckFunctionExists.c
+        Linking C executable cmTC_51e4f.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_51e4f.dir/link.txt --verbose=1
+        /home/coby/emsdk/upstream/emscripten/emcc  -DCHECK_FUNCTION_EXISTS=getnameinfo CMakeFiles/cmTC_51e4f.dir/CheckFunctionExists.c.o -o cmTC_51e4f.js 
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-IKuG7T'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:16 (check_function_exists)"
+    checks:
+      - "Looking for gethostbyname_r"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-SA0G3S"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-SA0G3S"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAS_GETHOSTBYNAME_R"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-SA0G3S'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_6524f/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_6524f.dir/build.make CMakeFiles/cmTC_6524f.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-SA0G3S'
+        Building C object CMakeFiles/cmTC_6524f.dir/CheckFunctionExists.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc   -DCHECK_FUNCTION_EXISTS=gethostbyname_r -std=gnu11 -MD -MT CMakeFiles/cmTC_6524f.dir/CheckFunctionExists.c.o -MF CMakeFiles/cmTC_6524f.dir/CheckFunctionExists.c.o.d -o CMakeFiles/cmTC_6524f.dir/CheckFunctionExists.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-SA0G3S/CheckFunctionExists.c
+        Linking C executable cmTC_6524f.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6524f.dir/link.txt --verbose=1
+        /home/coby/emsdk/upstream/emscripten/emcc  -DCHECK_FUNCTION_EXISTS=gethostbyname_r CMakeFiles/cmTC_6524f.dir/CheckFunctionExists.c.o -o cmTC_6524f.js 
+        wasm-ld: warning: function signature mismatch: gethostbyname_r
+        >>> defined as () -> i32 in CMakeFiles/cmTC_6524f.dir/CheckFunctionExists.c.o
+        >>> defined as (i32, i32, i32, i32, i32, i32) -> i32 in /home/coby/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten/libsockets.a(gethostbyname_r.o)
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-SA0G3S'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:17 (check_function_exists)"
+    checks:
+      - "Looking for gethostbyaddr_r"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-PkWZa0"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-PkWZa0"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAS_GETHOSTBYADDR_R"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-PkWZa0'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_66e1d/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_66e1d.dir/build.make CMakeFiles/cmTC_66e1d.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-PkWZa0'
+        Building C object CMakeFiles/cmTC_66e1d.dir/CheckFunctionExists.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc   -DCHECK_FUNCTION_EXISTS=gethostbyaddr_r -std=gnu11 -MD -MT CMakeFiles/cmTC_66e1d.dir/CheckFunctionExists.c.o -MF CMakeFiles/cmTC_66e1d.dir/CheckFunctionExists.c.o.d -o CMakeFiles/cmTC_66e1d.dir/CheckFunctionExists.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-PkWZa0/CheckFunctionExists.c
+        Linking C executable cmTC_66e1d.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_66e1d.dir/link.txt --verbose=1
+        /home/coby/emsdk/upstream/emscripten/emcc  -DCHECK_FUNCTION_EXISTS=gethostbyaddr_r CMakeFiles/cmTC_66e1d.dir/CheckFunctionExists.c.o -o cmTC_66e1d.js 
+        wasm-ld: warning: function signature mismatch: gethostbyaddr_r
+        >>> defined as () -> i32 in CMakeFiles/cmTC_66e1d.dir/CheckFunctionExists.c.o
+        >>> defined as (i32, i32, i32, i32, i32, i32, i32, i32) -> i32 in /home/coby/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten/libsockets.a(gethostbyaddr_r.o)
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-PkWZa0'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:18 (check_function_exists)"
+    checks:
+      - "Looking for inet_pton"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-dRo5ek"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-dRo5ek"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAS_INET_PTON"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-dRo5ek'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_4dfda/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_4dfda.dir/build.make CMakeFiles/cmTC_4dfda.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-dRo5ek'
+        Building C object CMakeFiles/cmTC_4dfda.dir/CheckFunctionExists.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc   -DCHECK_FUNCTION_EXISTS=inet_pton -std=gnu11 -MD -MT CMakeFiles/cmTC_4dfda.dir/CheckFunctionExists.c.o -MF CMakeFiles/cmTC_4dfda.dir/CheckFunctionExists.c.o.d -o CMakeFiles/cmTC_4dfda.dir/CheckFunctionExists.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-dRo5ek/CheckFunctionExists.c
+        Linking C executable cmTC_4dfda.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4dfda.dir/link.txt --verbose=1
+        /home/coby/emsdk/upstream/emscripten/emcc  -DCHECK_FUNCTION_EXISTS=inet_pton CMakeFiles/cmTC_4dfda.dir/CheckFunctionExists.c.o -o cmTC_4dfda.js 
+        wasm-ld: warning: function signature mismatch: inet_pton
+        >>> defined as () -> i32 in CMakeFiles/cmTC_4dfda.dir/CheckFunctionExists.c.o
+        >>> defined as (i32, i32, i32) -> i32 in /home/coby/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten/libc-debug.a(inet_pton.o)
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-dRo5ek'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/CheckFunctionExists.cmake:86 (try_compile)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:19 (check_function_exists)"
+    checks:
+      - "Looking for inet_ntop"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-L0LjQ7"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-L0LjQ7"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAS_INET_NTOP"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-L0LjQ7'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_97010/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_97010.dir/build.make CMakeFiles/cmTC_97010.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-L0LjQ7'
+        Building C object CMakeFiles/cmTC_97010.dir/CheckFunctionExists.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc   -DCHECK_FUNCTION_EXISTS=inet_ntop -std=gnu11 -MD -MT CMakeFiles/cmTC_97010.dir/CheckFunctionExists.c.o -MF CMakeFiles/cmTC_97010.dir/CheckFunctionExists.c.o.d -o CMakeFiles/cmTC_97010.dir/CheckFunctionExists.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-L0LjQ7/CheckFunctionExists.c
+        Linking C executable cmTC_97010.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_97010.dir/link.txt --verbose=1
+        /home/coby/emsdk/upstream/emscripten/emcc  -DCHECK_FUNCTION_EXISTS=inet_ntop CMakeFiles/cmTC_97010.dir/CheckFunctionExists.c.o -o cmTC_97010.js 
+        wasm-ld: warning: function signature mismatch: inet_ntop
+        >>> defined as () -> i32 in CMakeFiles/cmTC_97010.dir/CheckFunctionExists.c.o
+        >>> defined as (i32, i32, i32, i32) -> i32 in /home/coby/emsdk/upstream/emscripten/cache/sysroot/lib/wasm32-emscripten/libc-debug.a(inet_ntop.o)
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-L0LjQ7'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/share/cmake-3.28/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "/usr/share/cmake-3.28/Modules/CheckSourceCompiles.cmake:77 (cmake_check_source_compiles)"
+      - "/usr/share/cmake-3.28/Modules/CheckStructHasMember.cmake:77 (CHECK_SOURCE_COMPILES)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:20 (check_struct_has_member)"
+    checks:
+      - "Performing Test HAS_MSGHDR_FLAGS"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-yE1j9v"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-yE1j9v"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAS_MSGHDR_FLAGS"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-yE1j9v'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_76c86/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_76c86.dir/build.make CMakeFiles/cmTC_76c86.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-yE1j9v'
+        Building C object CMakeFiles/cmTC_76c86.dir/src.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc -DHAS_MSGHDR_FLAGS  -std=gnu11 -MD -MT CMakeFiles/cmTC_76c86.dir/src.c.o -MF CMakeFiles/cmTC_76c86.dir/src.c.o.d -o CMakeFiles/cmTC_76c86.dir/src.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-yE1j9v/src.c
+        Linking C executable cmTC_76c86.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_76c86.dir/link.txt --verbose=1
+        /home/coby/emsdk/upstream/emscripten/emcc CMakeFiles/cmTC_76c86.dir/src.c.o -o cmTC_76c86.js 
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeScratch/TryCompile-yE1j9v'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/coby/emsdk/upstream/emscripten/cmake/Modules/CheckTypeSize.cmake:114 (try_compile)"
+      - "/home/coby/emsdk/upstream/emscripten/cmake/Modules/CheckTypeSize.cmake:239 (__check_type_size_impl)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:22 (check_type_size)"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAVE_HAS_SOCKLEN_T"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_950cb/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_950cb.dir/build.make CMakeFiles/cmTC_950cb.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp'
+        Building C object CMakeFiles/cmTC_950cb.dir/HAS_SOCKLEN_T.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc   -std=gnu11 -MD -MT CMakeFiles/cmTC_950cb.dir/HAS_SOCKLEN_T.c.o -MF CMakeFiles/cmTC_950cb.dir/HAS_SOCKLEN_T.c.o.d -o CMakeFiles/cmTC_950cb.dir/HAS_SOCKLEN_T.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CheckTypeSize/HAS_SOCKLEN_T.c
+        Linking C executable cmTC_950cb.js
+        /usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_950cb.dir/link.txt --verbose=1
+        /home/coby/emsdk/upstream/emscripten/emcc CMakeFiles/cmTC_950cb.dir/HAS_SOCKLEN_T.c.o -o cmTC_950cb.js  --oformat=wasm -sWASM=1 
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp'
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/coby/emsdk/upstream/emscripten/cmake/Modules/CheckTypeSize.cmake:114 (try_compile)"
+      - "/home/coby/emsdk/upstream/emscripten/cmake/Modules/CheckTypeSize.cmake:239 (__check_type_size_impl)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:25 (check_type_size)"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAVE_HAS_QOS_FLOWID"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_da613/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_da613.dir/build.make CMakeFiles/cmTC_da613.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp'
+        Building C object CMakeFiles/cmTC_da613.dir/HAS_QOS_FLOWID.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc   -std=gnu11 -MD -MT CMakeFiles/cmTC_da613.dir/HAS_QOS_FLOWID.c.o -MF CMakeFiles/cmTC_da613.dir/HAS_QOS_FLOWID.c.o.d -o CMakeFiles/cmTC_da613.dir/HAS_QOS_FLOWID.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CheckTypeSize/HAS_QOS_FLOWID.c
+        /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CheckTypeSize/HAS_QOS_FLOWID.c:1:10: fatal error: 'winsock2.h' file not found
+            1 | #include "winsock2.h"
+              |          ^~~~~~~~~~~~
+        1 error generated.
+        gmake[1]: *** [CMakeFiles/cmTC_da613.dir/build.make:79: CMakeFiles/cmTC_da613.dir/HAS_QOS_FLOWID.c.o] Error 1
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp'
+        gmake: *** [Makefile:127: cmTC_da613/fast] Error 2
+        
+      exitCode: 2
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/home/coby/emsdk/upstream/emscripten/cmake/Modules/CheckTypeSize.cmake:114 (try_compile)"
+      - "/home/coby/emsdk/upstream/emscripten/cmake/Modules/CheckTypeSize.cmake:239 (__check_type_size_impl)"
+      - "vendor/moonlight-common-c/enet/CMakeLists.txt:26 (check_type_size)"
+    directories:
+      source: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp"
+      binary: "/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "/home/coby/emsdk/upstream/emscripten/emscan-deps"
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules;/home/coby/emsdk/upstream/emscripten/cmake/Modules"
+    buildResult:
+      variable: "HAVE_HAS_PQOS_FLOWID"
+      cached: true
+      stdout: |
+        Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp'
+        
+        Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_fe87c/fast
+        /usr/bin/gmake  -f CMakeFiles/cmTC_fe87c.dir/build.make CMakeFiles/cmTC_fe87c.dir/build
+        gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp'
+        Building C object CMakeFiles/cmTC_fe87c.dir/HAS_PQOS_FLOWID.c.o
+        /home/coby/emsdk/upstream/emscripten/emcc   -std=gnu11 -MD -MT CMakeFiles/cmTC_fe87c.dir/HAS_PQOS_FLOWID.c.o -MF CMakeFiles/cmTC_fe87c.dir/HAS_PQOS_FLOWID.c.o.d -o CMakeFiles/cmTC_fe87c.dir/HAS_PQOS_FLOWID.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CheckTypeSize/HAS_PQOS_FLOWID.c
+        /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CheckTypeSize/HAS_PQOS_FLOWID.c:1:10: fatal error: 'winsock2.h' file not found
+            1 | #include "winsock2.h"
+              |          ^~~~~~~~~~~~
+        1 error generated.
+        gmake[1]: *** [CMakeFiles/cmTC_fe87c.dir/build.make:79: CMakeFiles/cmTC_fe87c.dir/HAS_PQOS_FLOWID.c.o] Error 1
+        gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp'
+        gmake: *** [Makefile:127: cmTC_fe87c/fast] Error 2
+        
+      exitCode: 2
+...

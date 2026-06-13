@@ -25,6 +25,7 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
+      background: #000;
     }
 
     #connect-form {
@@ -72,6 +73,42 @@
       min-height: 1.2em;
       text-align: center;
     }
+
+    #pin-panel {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      display: none;
+      gap: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    #pin-panel.visible {
+      display: grid;
+    }
+
+    #pin-value {
+      color: #fff;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+    }
+
+    #pin-help {
+      color: #aaa;
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+
+    #pin-confirm-btn {
+      background: #242424;
+      border: 1px solid #444;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      padding: 9px;
+    }
   </style>
 </head>
 <body>
@@ -80,8 +117,13 @@
   <form id="connect-form">
     <h1>Moonlight Stream</h1>
     <input id="host-input" type="text" placeholder="Host (e.g. 1.2.3.4)" required />
-    <input id="port-input" type="number" placeholder="Port (default 47984)" value="47984" min="1" max="65535" />
+    <input id="port-input" type="number" placeholder="Port (auto; try blank)" min="1" max="65535" />
     <button id="connect-btn" type="submit">Connect</button>
+    <div id="pin-panel" aria-live="polite">
+      <div id="pin-value"></div>
+      <div id="pin-help">Enter this PIN in Sunshine, then click continue.</div>
+      <button id="pin-confirm-btn" type="button">I entered the PIN</button>
+    </div>
     <div id="status"></div>
   </form>
 

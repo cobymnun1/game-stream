@@ -1,0 +1,15 @@
+Determining size of socklen_t passed with the following output:
+Change Dir: '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp'
+
+Run Build Command(s): /usr/bin/cmake -E env VERBOSE=1 /usr/bin/gmake -f Makefile cmTC_950cb/fast
+/usr/bin/gmake  -f CMakeFiles/cmTC_950cb.dir/build.make CMakeFiles/cmTC_950cb.dir/build
+gmake[1]: Entering directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_950cb.dir/HAS_SOCKLEN_T.c.o
+/home/coby/emsdk/upstream/emscripten/emcc   -std=gnu11 -MD -MT CMakeFiles/cmTC_950cb.dir/HAS_SOCKLEN_T.c.o -MF CMakeFiles/cmTC_950cb.dir/HAS_SOCKLEN_T.c.o.d -o CMakeFiles/cmTC_950cb.dir/HAS_SOCKLEN_T.c.o -c /home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CheckTypeSize/HAS_SOCKLEN_T.c
+Linking C executable cmTC_950cb.js
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_950cb.dir/link.txt --verbose=1
+/home/coby/emsdk/upstream/emscripten/emcc CMakeFiles/cmTC_950cb.dir/HAS_SOCKLEN_T.c.o -o cmTC_950cb.js  --oformat=wasm -sWASM=1 
+gmake[1]: Leaving directory '/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/CMakeTmp'
+
+
+

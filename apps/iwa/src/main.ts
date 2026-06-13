@@ -8,6 +8,9 @@ const hostInput = document.getElementById('host-input') as HTMLInputElement
 const portInput = document.getElementById('port-input') as HTMLInputElement
 const connectBtn = document.getElementById('connect-btn') as HTMLButtonElement
 const statusEl   = document.getElementById('status') as HTMLDivElement
+const pinPanel = document.getElementById('pin-panel') as HTMLDivElement
+const pinValue = document.getElementById('pin-value') as HTMLDivElement
+const pinConfirmBtn = document.getElementById('pin-confirm-btn') as HTMLButtonElement
 
 // URL params — used by Next.js client to pre-fill + auto-connect
 const params = new URLSearchParams(location.search)
@@ -22,12 +25,33 @@ const WORKER_URL = 'http://localhost:4000' // injected by build in production
 
 function setStatus(text: string): void { statusEl.textContent = text }
 
+function hidePinPrompt(): void {
+  pinPanel.classList.remove('visible')
+  pinValue.textContent = ''
+  pinConfirmBtn.onclick = null
+}
+
+function showPinPrompt(pin: string): Promise<void> {
+  pinValue.textContent = pin
+  pinPanel.classList.add('visible')
+  setStatus('POST this PIN to Sunshine /api/pin, then click continue.')
+
+  return new Promise(resolve => {
+    pinConfirmBtn.onclick = () => {
+      hidePinPrompt()
+      setStatus('PIN submitted; waiting for Sunshine pairing response…')
+      resolve()
+    }
+  })
+}
+
 function onStateChange(state: ConnectionState): void {
   const labels: Record<ConnectionState, string> = {
     idle: '', pairing: 'Pairing with Sunshine…', launching: 'Launching game…',
     connecting: 'Connecting stream…', streaming: '', disconnected: 'Disconnected', error: '',
   }
   setStatus(labels[state])
+  if (state === 'disconnected' || state === 'error') hidePinPrompt()
   connectBtn.disabled = !['idle', 'disconnected', 'error'].includes(state)
   connectBtn.textContent = state === 'streaming' ? 'Disconnect' : 'Connect'
 }
@@ -38,7 +62,7 @@ form.addEventListener('submit', async (e) => {
   if (session) { await session.disconnect(); session = null; return }
 
   const host = hostInput.value.trim()
-  const httpPort = parseInt(portInput.value) || 47984
+  const httpPort = parseInt(portInput.value) || 47989
   if (!host) return
 
   // Build a ConnectionInfo from the manual form — all ports assumed to be at default values
@@ -56,6 +80,7 @@ form.addEventListener('submit', async (e) => {
     authToken: '',
     connectionInfo,
     canvas,
+    onPin: showPinPrompt,
     onStateChange: state => {
       onStateChange(state)
       if (state === 'streaming') form.style.display = 'none'
@@ -65,11 +90,6 @@ form.addEventListener('submit', async (e) => {
   })
 
   await session.connect()
-})
-
-// Escape = exit pointer lock without disconnecting
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && document.pointerLockElement) document.exitPointerLock()
 })
 
 // postMessage from Next.js — receives full ConnectionInfo from the worker
@@ -92,11 +112,11 @@ window.addEventListener('message', async (e: MessageEvent) => {
     authToken,
     connectionInfo,
     canvas,
+    onPin: showPinPrompt,
     onStateChange,
     onError: err => setStatus(`Error: ${err.message}`),
   })
 
-  form.style.display = 'none'
   await session.connect()
 })
 

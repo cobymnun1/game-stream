@@ -1,0 +1,14 @@
+/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/moonlight.dir
+/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/edit_cache.dir
+/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/rebuild_cache.dir
+/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/list_install_components.dir
+/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/install.dir
+/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/install/local.dir
+/home/coby/projects/game-stream/packages/protocol/build/CMakeFiles/install/strip.dir
+/home/coby/projects/game-stream/packages/protocol/build/enet/CMakeFiles/enet.dir
+/home/coby/projects/game-stream/packages/protocol/build/enet/CMakeFiles/edit_cache.dir
+/home/coby/projects/game-stream/packages/protocol/build/enet/CMakeFiles/rebuild_cache.dir
+/home/coby/projects/game-stream/packages/protocol/build/enet/CMakeFiles/list_install_components.dir
+/home/coby/projects/game-stream/packages/protocol/build/enet/CMakeFiles/install.dir
+/home/coby/projects/game-stream/packages/protocol/build/enet/CMakeFiles/install/local.dir
+/home/coby/projects/game-stream/packages/protocol/build/enet/CMakeFiles/install/strip.dir

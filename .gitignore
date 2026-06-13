@@ -13,5 +13,6 @@ iwa-key.pem
 .next/
 .DS_Store
 .claude/settings.local.json
+.cursor/debug-*.log
 tsconfig.tsbuildinfo
 *.tsbuildinfo
