@@ -149,7 +149,10 @@ export default defineConfig({
     outDir: 'dist',
     target: 'esnext',
     rollupOptions: {
-      input: { main: resolve(__dirname, 'index.html') },
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        auto: resolve(__dirname, 'auto.html'),
+      },
     },
   },
   server: {

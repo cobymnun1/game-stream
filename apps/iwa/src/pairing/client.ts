@@ -143,6 +143,12 @@ export class PairingClient {
   onPin: ((pin: string) => Promise<void>) | null = null
   onPairingStep: ((step: string) => void) | null = null
 
+  // Inject a pre-existing client identity so pair() can be skipped entirely.
+  // Used when pairing was performed out-of-band (e.g. via pairing-api).
+  injectKeys(keys: PairingKeys): void {
+    this.pairingKeys = keys
+  }
+
   constructor(host: string, port: number, uniqueId: string) {
     this.host = host
     this.port = port

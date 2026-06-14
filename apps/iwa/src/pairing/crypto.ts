@@ -43,6 +43,22 @@ export async function generatePairingKeys(uniqueId: string): Promise<PairingKeys
   }
 }
 
+// Reconstruct a PairingKeys from PEM strings returned by the pairing-api
+// so the IWA can skip pair() and go straight to launch.
+export function keysFromPem(certPem: string, privateKeyPem: string): PairingKeys {
+  const normalCert = normalizePem(certPem)
+  const normalKey  = normalizePem(privateKeyPem)
+  const certBytes  = new TextEncoder().encode(normalCert)
+  const cert       = forge.pki.certificateFromPem(normalCert)
+  return {
+    privateKeyPem: normalKey,
+    certPem: normalCert,
+    certHex: bufToHex(certBytes),
+    certBytes,
+    certSignature: forgeBytesToUint8Array(cert.signature),
+  }
+}
+
 export async function sha1(data: Uint8Array): Promise<Uint8Array> {
   // crypto.subtle.digest requires a proper ArrayBuffer, not SharedArrayBuffer-backed view
   const buf = new ArrayBuffer(data.byteLength)

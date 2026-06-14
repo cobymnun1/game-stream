@@ -5,6 +5,7 @@ import {
   type TransportFactory,
 } from '@basehack/protocol'
 import { PairingClient } from '../pairing/client.ts'
+import { keysFromPem } from '../pairing/crypto.ts'
 import { TcpTransport } from '../transport/tcp.ts'
 import { UdpTransport } from '../transport/udp.ts'
 import { VideoStreamDecoder } from '../video/decoder.ts'
@@ -53,6 +54,12 @@ export interface SessionOptions {
   onPin?: (pin: string) => Promise<void>
   onStateChange: (state: ConnectionState) => void
   onError: (err: Error) => void
+  // When set, pair() is skipped and this pre-paired identity is used directly.
+  prePairedIdentity?: {
+    uniqueId: string
+    certPem: string
+    privateKeyPem: string
+  }
 }
 
 export class SessionManager {
@@ -106,7 +113,8 @@ export class SessionManager {
 
       // ── Pairing ─────────────────────────────────────────────────────────
       this.setState('pairing')
-      const uniqueId = getOrCreateUniqueId()
+      const prePaired = this.opts.prePairedIdentity
+      const uniqueId = prePaired?.uniqueId ?? getOrCreateUniqueId()
       const pairing = new PairingClient(host, ports.http, uniqueId)
 
       pairing.onPin = this.opts.onPin ?? null
@@ -117,13 +125,19 @@ export class SessionManager {
         return { appVersion: '', codecModeSupport: 0, pairStatus: '0' }
       })
 
-      try {
-        await pairing.pair()
-      } catch (err) {
-        if (serverInfo.pairStatus === '1') {
-          console.warn('[pairing] skipping failed pair attempt because server reported this client as already paired:', err)
-        } else {
-          throw err
+      if (prePaired) {
+        // Identity was established out-of-band (e.g. via pairing-api); skip pair().
+        pairing.injectKeys(keysFromPem(prePaired.certPem, prePaired.privateKeyPem))
+        console.info('[pairing] using pre-paired identity, skipping pair()')
+      } else {
+        try {
+          await pairing.pair()
+        } catch (err) {
+          if (serverInfo.pairStatus === '1') {
+            console.warn('[pairing] skipping failed pair attempt because server reported this client as already paired:', err)
+          } else {
+            throw err
+          }
         }
       }
 

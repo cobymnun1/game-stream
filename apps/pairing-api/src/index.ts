@@ -1,5 +1,6 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 import { PairingSession, type PairingIdentity } from './pairing.js'
 
 type JobStatus = 'pairing' | 'paired' | 'failed'
@@ -26,6 +27,11 @@ function sweepJobs(): void {
 }
 
 const app = new Hono()
+
+// Allow the IWA auto-connect page (served from another local origin, e.g.
+// localhost:3001) to call this API from the browser. Without CORS the browser
+// blocks the cross-origin fetch and the page sees "Failed to fetch".
+app.use('*', cors())
 
 app.get('/health', c => c.json({ ok: true }))
 
@@ -90,6 +96,16 @@ app.post('/pair', async c => {
     })
 
   return c.json({ id, pin, status: job.status })
+})
+
+// Manually mark a pairing job as paired (skips the background handshake).
+// Use this when pairing was performed through Sunshine's UI/API manually.
+app.post('/pair/:id/confirm', c => {
+  const job = jobs.get(c.req.param('id'))
+  if (!job) return c.json({ error: 'Not found' }, 404)
+  job.status = 'paired'
+  console.log(`[pair ${job.id}] confirmed as paired manually`)
+  return c.json({ id: job.id, host: job.host, status: job.status })
 })
 
 // Poll pairing status. Pass ?includeIdentity=1 to also receive the client

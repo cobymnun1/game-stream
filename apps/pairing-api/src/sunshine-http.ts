@@ -1,4 +1,4 @@
-import { request as httpRequest } from 'node:http'
+import { Agent as HttpAgent, request as httpRequest } from 'node:http'
 import { Agent as HttpsAgent, request as httpsRequest } from 'node:https'
 
 // Server-side replacement for the browser fetch + Vite dev proxy that the IWA
@@ -38,9 +38,13 @@ export function sunshineGet(req: SunshineRequest): Promise<string> {
 
   return new Promise<string>((resolve, reject) => {
     const requestImpl = scheme === 'https' ? httpsRequest : httpRequest
+    // Disable keep-alive so each request opens a fresh TCP connection.
+    // Sunshine can close idle GameStream connections between calls (e.g.
+    // between getServerInfo and getservercert which has an RSA keygen gap),
+    // causing "socket hang up" when Node's default agent reuses a dead socket.
     const agent = scheme === 'https'
       ? new HttpsAgent({ keepAlive: false, maxCachedSessions: 0 })
-      : undefined
+      : new HttpAgent({ keepAlive: false })
 
     const upstream = requestImpl({
       protocol: `${scheme}:`,
