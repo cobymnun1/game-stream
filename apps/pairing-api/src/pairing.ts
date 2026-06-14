@@ -15,6 +15,7 @@ import {
   equalBytes,
 } from './crypto.js'
 import { sunshineGet, xmlTag, type SunshineTls } from './sunshine-http.js'
+import { mapPort, type PortMap } from './port-map.js'
 
 const DEVICE_NAME = 'roth'
 const DEFAULT_REQUEST_TIMEOUT_MS = 10_000
@@ -44,11 +45,18 @@ export class PairingSession {
   private salt: Uint8Array | null = null
   private aesKey: Uint8Array | null = null
 
+  // Optional Akash internal->external port map. When absent, ports pass through
+  // unchanged (direct/local pairing). When present, every Sunshine HTTP/HTTPS
+  // call is translated, so the host can advertise its internal ports while we
+  // connect to the external ones.
+  private readonly portMap: PortMap | undefined
+
   onStep: ((step: string) => void) | null = null
 
-  constructor(host: string, port = 47989) {
+  constructor(host: string, port = 47989, portMap?: PortMap) {
     this.host = host
     this.port = port
+    this.portMap = portMap
     this.uniqueId = bufToHex(randomBytes(8))
     this.uuid = crypto.randomUUID()
   }
@@ -72,12 +80,12 @@ export class PairingSession {
 
     for (const port of ports) {
       try {
-        const body = await sunshineGet({ host: this.host, port, path, params, scheme: 'http', timeoutMs })
+        const body = await sunshineGet({ host: this.host, port: mapPort(this.portMap, port), path, params, scheme: 'http', timeoutMs })
         this.port = port
         this.resolvedHttpPort = port
         return body
       } catch (err) {
-        errors.push(`${port}: ${err instanceof Error ? err.message : String(err)}`)
+        errors.push(`${port} (-> ${mapPort(this.portMap, port)}): ${err instanceof Error ? err.message : String(err)}`)
       }
     }
 
@@ -87,7 +95,7 @@ export class PairingSession {
   private secureRequest(path: string, params: Record<string, string>, timeoutMs = DEFAULT_REQUEST_TIMEOUT_MS): Promise<string> {
     if (!this.keys) throw new Error('Cannot call Sunshine HTTPS endpoint before pairing keys are generated')
     const tls: SunshineTls = { clientCert: this.keys.certPem, clientKey: this.keys.privateKeyPem }
-    return sunshineGet({ host: this.host, port: this.httpsPort, path, params, scheme: 'https', tls, timeoutMs })
+    return sunshineGet({ host: this.host, port: mapPort(this.portMap, this.httpsPort), path, params, scheme: 'https', tls, timeoutMs })
   }
 
   // Probe Sunshine; resolves the GameStream HTTP port and reads version info.

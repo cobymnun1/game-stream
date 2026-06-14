@@ -445,6 +445,12 @@ interface UdpProxySocket {
   waiters: Array<() => void>
   remoteAddress: string | undefined
   remotePort: number | undefined
+  // #region agent log
+  rxTotal?: number
+  rxUniqueFull?: Set<number>
+  rxUniquePayload?: Set<number>
+  rxLastReport?: number
+  // #endregion
 }
 
 async function handleUdpProxy(body: {
@@ -523,6 +529,41 @@ function udpBind(localPort?: number, remoteAddress?: string, remotePort?: number
     }
     socket.on('message', (msg, rinfo) => {
       entry.packets.push({ data: Buffer.from(msg), address: rinfo.address, port: rinfo.port })
+      // #region agent log
+      // Distinguish header variation from payload variation. A frozen host
+      // desktop sends advancing frame/seq headers (bytes ~0-31) with identical
+      // encoded payload (bytes 32+). Hashing densely (every byte) avoids missing
+      // the header fields the previous sparse hash skipped.
+      {
+        let full = msg.length
+        for (let i = 0; i < msg.length; i++) full = (full * 31 + msg[i]) >>> 0
+        let payload = Math.max(0, msg.length - 32)
+        for (let i = 32; i < msg.length; i++) payload = (payload * 31 + msg[i]) >>> 0
+        entry.rxTotal = (entry.rxTotal ?? 0) + 1
+        if (!entry.rxUniqueFull) entry.rxUniqueFull = new Set<number>()
+        if (!entry.rxUniquePayload) entry.rxUniquePayload = new Set<number>()
+        entry.rxUniqueFull.add(full)
+        entry.rxUniquePayload.add(payload)
+        const now = Date.now()
+        if (!entry.rxLastReport) entry.rxLastReport = now
+        if (entry.rxTotal % 500 === 0 && now - entry.rxLastReport > 1500) {
+          entry.rxLastReport = now
+          const head: number[] = []
+          for (let i = 0; i < Math.min(16, msg.length); i++) head.push(msg[i])
+          debugLog('H-WIRE', 'apps/iwa/vite.config.ts:socket.message', 'raw datagram variation', {
+            id,
+            localPort: socket.address().port,
+            total: entry.rxTotal,
+            uniqueFull: entry.rxUniqueFull.size,
+            uniquePayload: entry.rxUniquePayload.size,
+            lastLen: msg.length,
+            head16: head,
+          })
+          if (entry.rxUniqueFull.size > 8192) entry.rxUniqueFull.clear()
+          if (entry.rxUniquePayload.size > 8192) entry.rxUniquePayload.clear()
+        }
+      }
+      // #endregion
       for (const waiter of entry.waiters.splice(0)) waiter()
     })
     socket.once('error', err => {

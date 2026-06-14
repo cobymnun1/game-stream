@@ -1,4 +1,5 @@
 import { SessionManager } from './session/manager.ts'
+import { loadPortMap, resolvePortMapUrl } from './net/port-map.ts'
 import type { ConnectionState } from './types/protocol.ts'
 import type { ConnectionInfo } from './types/connection.ts'
 
@@ -64,6 +65,10 @@ form.addEventListener('submit', async (e) => {
   const host = hostInput.value.trim()
   const httpPort = parseInt(portInput.value) || 47989
   if (!host) return
+
+  // Fetch the Akash port mapping (guarded/no-op if unreachable) before opening
+  // sockets, so pairing/launch and media streams use the external ports.
+  await loadPortMap(resolvePortMapUrl())
 
   // Build a ConnectionInfo from the manual form — all ports assumed to be at default values
   const connectionInfo: ConnectionInfo = {

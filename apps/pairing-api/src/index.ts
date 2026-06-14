@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { PairingSession, type PairingIdentity } from './pairing.js'
+import { fetchPortMap, type PortMap } from './port-map.js'
 
 type JobStatus = 'pairing' | 'paired' | 'failed'
 
@@ -35,13 +36,26 @@ app.use('*', cors())
 
 app.get('/health', c => c.json({ ok: true }))
 
+// Proxy the 0xbox-server's port mappings so the browser can read them without
+// CORS issues (this Hono app already sends Access-Control-Allow-Origin: *).
+const UPSTREAM_PORTMAP_URL = process.env.PORTMAP_URL ?? 'http://localhost:3000/mappings.json'
+app.get('/mappings.json', async c => {
+  try {
+    const res = await fetch(UPSTREAM_PORTMAP_URL)
+    if (!res.ok) return c.json({ error: `upstream ${res.status}` }, 502)
+    return c.json(await res.json())
+  } catch (e) {
+    return c.json({ error: e instanceof Error ? e.message : 'upstream unreachable' }, 502)
+  }
+})
+
 // Start pairing with a Sunshine host. Generates the PIN and returns it
 // immediately; the handshake completes in the background once the caller
 // submits the PIN to Sunshine out-of-band. Poll GET /pair/:id for completion.
 app.post('/pair', async c => {
   sweepJobs()
 
-  let body: { host?: string; port?: number }
+  let body: { host?: string; port?: number; portMapUrl?: string }
   try {
     body = await c.req.json()
   } catch {
@@ -52,7 +66,21 @@ app.post('/pair', async c => {
   if (!host) return c.json({ error: 'host is required' }, 400)
   const port = Number(body.port) || 47989
 
-  const session = new PairingSession(host, port)
+  // Opt-in Akash port translation: when a port-map URL is supplied (per request
+  // or via PORTMAP_URL), fetch the internal->external map and pair against the
+  // external ports. Omit it for direct/local hosts (ports pass through).
+  const portMapUrl = (body.portMapUrl ?? process.env.PORTMAP_URL ?? '').trim()
+  let portMap: PortMap | undefined
+  if (portMapUrl) {
+    try {
+      portMap = await fetchPortMap(portMapUrl)
+      console.log(`[pair] loaded ${portMap.size} port mappings from ${portMapUrl}`)
+    } catch (e) {
+      return c.json({ error: e instanceof Error ? e.message : 'Failed to load port map' }, 502)
+    }
+  }
+
+  const session = new PairingSession(host, port, portMap)
 
   // Probe first so an unreachable / wrong-port host fails before we mint a PIN.
   try {

@@ -28,6 +28,7 @@ export class MouseInput {
   private canvas: HTMLCanvasElement
   private onInput: (event: MouseInputEvent) => void
   private attached = false
+  private pendingPointerLock = false
 
   constructor(canvas: HTMLCanvasElement, onInput: (event: MouseInputEvent) => void) {
     this.canvas = canvas
@@ -54,11 +55,29 @@ export class MouseInput {
     } catch (e) {
       mouseDbg('Hesc1', 'mouse.ts:requestPointerLock', 'keyboard.lock threw', { err: String(e) })
     }
+    // Pointer Lock requires the document to be either transiently activated OR
+    // already in fullscreen. requestFullscreen() consumes the click's transient
+    // activation, and the element is not fullscreen until the (async) transition
+    // completes — so requesting pointer lock synchronously here fails with
+    // "A user gesture is required". Defer pointer lock to the fullscreenchange
+    // handler, where the "already in fullscreen" condition is satisfied.
     if (!document.fullscreenElement) {
-      void this.canvas.requestFullscreen?.({ navigationUI: 'hide' }).catch(() => {})
+      this.pendingPointerLock = true
+      void this.canvas.requestFullscreen?.({ navigationUI: 'hide' }).catch(() => {
+        // Fullscreen denied — fall back to requesting lock with the live gesture.
+        this.pendingPointerLock = false
+        this.lockPointer()
+      })
+      return
     }
+    this.lockPointer()
+  }
+
+  private lockPointer(): void {
     const p = this.canvas.requestPointerLock() as unknown as Promise<void> | undefined
-    if (p && typeof p.catch === 'function') p.catch(() => {})
+    if (p && typeof p.catch === 'function') {
+      p.catch((e: unknown) => mouseDbg('Hpl1', 'mouse.ts:requestPointerLock', 'pointerlock promise rejected', { err: String(e) }))
+    }
   }
 
   attach(): void {
@@ -69,6 +88,7 @@ export class MouseInput {
     this.canvas.addEventListener('wheel', this.handleWheel, { passive: false })
     this.canvas.addEventListener('contextmenu', this.suppressContext)
     document.addEventListener('pointerlockchange', this.handlePointerLockChange)
+    document.addEventListener('pointerlockerror', this.handlePointerLockError)
     document.addEventListener('fullscreenchange', this.handleFullscreenChange)
     this.attached = true
   }
@@ -81,6 +101,7 @@ export class MouseInput {
     this.canvas.removeEventListener('wheel', this.handleWheel)
     this.canvas.removeEventListener('contextmenu', this.suppressContext)
     document.removeEventListener('pointerlockchange', this.handlePointerLockChange)
+    document.removeEventListener('pointerlockerror', this.handlePointerLockError)
     document.removeEventListener('fullscreenchange', this.handleFullscreenChange)
     this.releaseCapture()
     this.attached = false
@@ -99,9 +120,17 @@ export class MouseInput {
       pointerLocked: document.pointerLockElement === this.canvas,
     })
     // #endregion
+    // Entered fullscreen with a pending capture request: now that the document
+    // is in fullscreen, pointer lock is permitted without transient activation.
+    if (document.fullscreenElement && this.pendingPointerLock) {
+      this.pendingPointerLock = false
+      this.lockPointer()
+      return
+    }
     // User held Escape to leave fullscreen — free the cursor + keyboard. The
     // stream keeps running; clicking the canvas re-acquires capture.
     if (!document.fullscreenElement) {
+      this.pendingPointerLock = false
       try { (navigator as NavigatorWithKeyboard).keyboard?.unlock?.() } catch { /* noop */ }
       if (document.pointerLockElement === this.canvas) document.exitPointerLock()
     }
@@ -112,6 +141,9 @@ export class MouseInput {
     // Only send relative movement — requires pointer lock for accurate deltas
     if (document.pointerLockElement !== this.canvas) return
     if (event.movementX === 0 && event.movementY === 0) return
+    // #region agent log
+    mouseDbg('H-IN2', 'mouse.ts:handleMove', 'mouse move dispatched (locked)', { dx: event.movementX, dy: event.movementY })
+    // #endregion
     this.onInput({ type: 'move', deltaX: event.movementX, deltaY: event.movementY })
   }
 
@@ -147,10 +179,25 @@ export class MouseInput {
   }
 
   private handlePointerLockChange = (): void => {
+    // #region agent log
+    mouseDbg('Hpl1', 'mouse.ts:handlePointerLockChange', 'pointerlockchange', {
+      locked: document.pointerLockElement === this.canvas,
+      fullscreen: Boolean(document.fullscreenElement),
+    })
+    // #endregion
     // Pointer lock dropped (e.g. user pressed Escape) — stop sending moves
     if (document.pointerLockElement !== this.canvas) {
       // Could show a "click to recapture" overlay here
     }
+  }
+
+  private handlePointerLockError = (): void => {
+    // #region agent log
+    mouseDbg('Hpl1', 'mouse.ts:handlePointerLockError', 'pointerlockerror event', {
+      fullscreen: Boolean(document.fullscreenElement),
+      pointerLockElement: document.pointerLockElement === this.canvas,
+    })
+    // #endregion
   }
 
   private suppressContext = (e: Event): void => e.preventDefault()

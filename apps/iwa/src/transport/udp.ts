@@ -1,3 +1,5 @@
+import { mapPort } from '../net/port-map.ts'
+
 export interface UdpPacket {
   data: Uint8Array
   remoteAddress: string
@@ -82,7 +84,16 @@ export class UdpTransport {
 
   async send(data: Uint8Array, address?: string, port?: number): Promise<void> {
     const resolved = address ?? this.remoteAddress
-    const resolvedPort = port ?? this.remotePort
+    // Akash maps Sunshine's internal ports to external ports. The ENet control
+    // stream and the video/audio ping threads send per-packet to the internal
+    // port (e.g. 47999/48000) which Akash never exposes, so translate it here
+    // too — the factory only mapped connect()/remotePort, not per-packet sends.
+    const rawPort = port ?? this.remotePort
+    const resolvedPort = rawPort !== undefined ? mapPort(rawPort) : undefined
+
+    // #region agent log
+    fetch('http://127.0.0.1:7458/ingest/a70defe2-9a92-40ab-8b63-4a3e87de3fac', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '31fcc6' }, body: JSON.stringify({ sessionId: '31fcc6', runId: 'udp-portmap-fix', hypothesisId: 'H90,H91', location: 'apps/iwa/src/transport/udp.ts:send', message: 'UDP send destination after port-map', data: { rawPort: rawPort ?? null, resolvedPort: resolvedPort ?? null, host: resolved ?? null, dev: this.devSocketId !== undefined }, timestamp: Date.now() }) }).catch(() => {})
+    // #endregion
 
     if (this.devSocketId !== undefined) {
       const sendBody: Record<string, unknown> = { op: 'send', id: this.devSocketId, data: bytesToBase64(data) }

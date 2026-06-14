@@ -1,4 +1,5 @@
 import { SessionManager } from './session/manager.ts'
+import { loadPortMap, resolvePortMapUrl } from './net/port-map.ts'
 import type { ConnectionState } from './types/protocol.ts'
 
 // Pairing-api base URL. In dev both services run locally.
@@ -19,12 +20,14 @@ function setError(msg: string): void {
 
 // ── Read ?id= from the URL ────────────────────────────────────────────────────
 const params = new URLSearchParams(location.search)
-const pairId = params.get('id')
-if (!pairId) {
+const pairIdParam = params.get('id')
+if (!pairIdParam) {
   setStatus('')
   setError('No ?id= in URL. Usage: /auto.html?id=<pair-job-id>')
   throw new Error('missing pair id')
 }
+// Narrowed to a non-null const so the closures below see `string`, not `string | null`.
+const pairId: string = pairIdParam
 
 // ── Pairing-api response shape ────────────────────────────────────────────────
 interface PairJobResponse {
@@ -63,6 +66,11 @@ async function run(): Promise<void> {
 
   const { uniqueId, certPem, privateKeyPem } = job.identity
   const host = job.host
+
+  // Fetch the Akash port mapping (no-op/guarded if unreachable) before we open
+  // any sockets, so all subsequent connections use the external ports.
+  setStatus('Loading port map…')
+  await loadPortMap(resolvePortMapUrl())
 
   setStatus(`Paired with ${host}. Starting stream…`)
 

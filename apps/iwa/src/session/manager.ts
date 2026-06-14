@@ -6,6 +6,7 @@ import {
 } from '@basehack/protocol'
 import { PairingClient } from '../pairing/client.ts'
 import { keysFromPem } from '../pairing/crypto.ts'
+import { mapPort } from '../net/port-map.ts'
 import { TcpTransport } from '../transport/tcp.ts'
 import { UdpTransport } from '../transport/udp.ts'
 import { VideoStreamDecoder } from '../video/decoder.ts'
@@ -309,13 +310,17 @@ export class SessionManager {
 }
 
 function createDirectSocketsTransport(): TransportFactory {
+  // RTSP/video/audio/control ports are negotiated by the WASM core using
+  // Sunshine's internal ports; mapPort rewrites them to the external (Akash)
+  // ports here, just before the socket is opened. localPort is a local bind,
+  // not a destination, so it is left untouched.
   return {
-    connectTcp: (host, port) => TcpTransport.connect(host, port),
+    connectTcp: (host, port) => TcpTransport.connect(host, mapPort(port)),
     createUdp: options => {
       const udpOptions: { localPort?: number; remoteAddress?: string; remotePort?: number } = {}
       if (options.localPort !== undefined) udpOptions.localPort = options.localPort
       if (options.remoteAddress !== undefined) udpOptions.remoteAddress = options.remoteAddress
-      if (options.remotePort !== undefined) udpOptions.remotePort = options.remotePort
+      if (options.remotePort !== undefined) udpOptions.remotePort = mapPort(options.remotePort)
       return UdpTransport.create(udpOptions)
     },
   }

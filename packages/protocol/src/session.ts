@@ -173,23 +173,32 @@ export class MoonlightSession implements InputSink {
 
   sendKeyboard(keyCode: number, action: KeyboardAction, modifiers = 0): void {
     const rawAction = action === 'down' ? KEY_ACTION_DOWN : KEY_ACTION_UP
-    this.module.ccall('ml_send_keyboard', 'number', ['number', 'number', 'number'], [
+    const ret = this.module.ccall('ml_send_keyboard', 'number', ['number', 'number', 'number'], [
       keyCode,
       rawAction,
       modifiers,
     ])
+    // #region agent log
+    fetch('http://127.0.0.1:7458/ingest/a70defe2-9a92-40ab-8b63-4a3e87de3fac',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'31fcc6'},body:JSON.stringify({sessionId:'31fcc6',runId:'input-tx',hypothesisId:'H-IN1',location:'session.ts:sendKeyboard',message:'LiSendKeyboardEvent ret',data:{keyCode,rawAction,ret},timestamp:Date.now()})}).catch(()=>{})
+    // #endregion
   }
 
   sendMouseMove(deltaX: number, deltaY: number): void {
-    this.module.ccall('ml_send_mouse_move', 'number', ['number', 'number'], [
+    const ret = this.module.ccall('ml_send_mouse_move', 'number', ['number', 'number'], [
       Math.round(deltaX),
       Math.round(deltaY),
     ])
+    // #region agent log
+    fetch('http://127.0.0.1:7458/ingest/a70defe2-9a92-40ab-8b63-4a3e87de3fac',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'31fcc6'},body:JSON.stringify({sessionId:'31fcc6',runId:'input-tx',hypothesisId:'H-IN1',location:'session.ts:sendMouseMove',message:'LiSendMouseMoveEvent ret',data:{dx:Math.round(deltaX),dy:Math.round(deltaY),ret},timestamp:Date.now()})}).catch(()=>{})
+    // #endregion
   }
 
   sendMouseButton(button: number, action: MouseButtonAction): void {
     const rawAction = action === 'down' ? BUTTON_ACTION_PRESS : BUTTON_ACTION_RELEASE
-    this.module.ccall('ml_send_mouse_button', 'number', ['number', 'number'], [button, rawAction])
+    const ret = this.module.ccall('ml_send_mouse_button', 'number', ['number', 'number'], [button, rawAction])
+    // #region agent log
+    fetch('http://127.0.0.1:7458/ingest/a70defe2-9a92-40ab-8b63-4a3e87de3fac',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'31fcc6'},body:JSON.stringify({sessionId:'31fcc6',runId:'input-tx',hypothesisId:'H-IN1',location:'session.ts:sendMouseButton',message:'LiSendMouseButtonEvent ret',data:{button,rawAction,ret},timestamp:Date.now()})}).catch(()=>{})
+    // #endregion
   }
 
   sendMouseScroll(wheelDelta: number): void {

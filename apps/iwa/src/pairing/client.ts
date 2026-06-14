@@ -1,4 +1,5 @@
 import type { AppInfo, LaunchResult, StreamConfig } from '../types/protocol.ts'
+import { mapPort } from '../net/port-map.ts'
 import {
   generatePairingKeys,
   type PairingKeys,
@@ -42,14 +43,17 @@ function debugLog(hypothesisId: string, location: string, message: string, data:
 }
 
 function apiUrl(host: string, port: number, path: string, params: Record<string, string> = {}, scheme: 'http' | 'https' = 'http') {
+  // Translate Sunshine's internal port to its external (Akash) port. No-op when
+  // no port map is loaded, so direct (non-Akash) hosts behave unchanged.
+  const realPort = mapPort(port)
   const shouldProxy = location.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(location.hostname)
   const url = shouldProxy
     ? new URL(DEV_SUNSHINE_PROXY, location.origin)
-    : new URL(`${scheme}://${host}:${port}${path}`)
+    : new URL(`${scheme}://${host}:${realPort}${path}`)
 
   if (shouldProxy) {
     url.searchParams.set('host', host)
-    url.searchParams.set('port', String(port))
+    url.searchParams.set('port', String(realPort))
     url.searchParams.set('path', path)
     url.searchParams.set('scheme', scheme)
   }
@@ -203,7 +207,7 @@ export class PairingClient {
 
     return xmlPostJson(new URL(DEV_SUNSHINE_PROXY, location.origin).toString(), {
       host: this.host,
-      port: this.httpsPort,
+      port: mapPort(this.httpsPort),
       path,
       scheme: 'https',
       params,
